@@ -48,7 +48,8 @@ Type-checking is `npx tsc --noEmit` — also from `ismot-next/`.
 │
 ├── ismot-next/                ★ THE ACTIVE APP
 │   ├── app/
-│   │   ├── page.tsx           → renders <Hero />
+│   │   ├── page.tsx           → renders <Hero />            (route /)
+│   │   ├── blank/page.tsx     → the same <Hero />, scratch  (route /blank)
 │   │   ├── layout.tsx         → metadata, fonts ("Ismot")
 │   │   ├── hero.tsx           → the entire hero: markup + GSAP timeline
 │   │   ├── gsap.ts            → the single GSAP registration point
