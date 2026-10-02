@@ -69,9 +69,10 @@ function ArrowRight({ className }: { className?: string }) {
  *   1. nothing but the light-green background
  *   2. the bottle drops in from above the fold with gravity easing, then
  *      squashes, hops a few pixels and settles
- *   3. as it touches down the copy pops out from behind the bottle: headline
- *      first, then the buttons, then the right-hand column; the big ISMOT
- *      watermark breathes in behind everything
+ *   3. as it touches down the copy pops out from behind the bottle — both
+ *      columns on the same two beats (headline with the product photo, then
+ *      the buttons with the feature rows) so neither side leads the other;
+ *      the big ISMOT watermark breathes in behind everything
  *   4. the nav fades/slides down from the top once the bottle has landed
  *
  * Stacking, so the headline really slides out from behind the bottle while the
@@ -223,14 +224,19 @@ export default function Hero() {
         )
 
         /* ——— 3. copy slides out from behind the bottle ——— */
-        // headline first: slide + fade on one line of timing, blur clearing faster
+        /* Both columns share the same two beats, so neither side appears ahead
+           of the other: the headline lands with the product photo, and the
+           buttons land with the feature rows. Each side still emerges from
+           behind the bottle — it just does so in step. Within a side the order
+           is still top-down, so the cascade reads as intended. */
+        // beat 1 — headline (left) together with the product photo (right)
         .to(lines, { x: railX, opacity: 1, duration: 0.9, stagger: 0.09 }, 1)
+        // blur clears faster than the fade so the text sharpens as it arrives
         .to(lines, { filter: "blur(0px)", duration: 0.5, stagger: 0.09, ease: "power2.out" }, 1)
-        // then the buttons
+        .to(media, { x: railX, opacity: 1, duration: 0.9 }, 1)
+        // beat 2 — buttons (left) together with the feature rows (right)
         .to(ctas, { x: railX, opacity: 1, duration: 0.8, stagger: 0.1 }, 1.9)
-        // then the right-hand column, emerging from behind the bottle too
-        .to(media, { x: railX, opacity: 1, duration: 0.9 }, 2)
-        .to(features, { x: railX, opacity: 1, duration: 0.8, stagger: 0.1 }, 2.1)
+        .to(features, { x: railX, opacity: 1, duration: 0.8, stagger: 0.1 }, 1.9)
 
         // ISMOT watermark breathes in softly behind everything
         .to(
