@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# Ismot — auto-push every commit to the remote.
+#
+# Enabled by the repository-local setting `core.hooksPath = .githooks`
+# (see README.md → "Git workflow & auto-save").
+#
+# It never fails a commit: if the push cannot reach the remote (offline, or
+# credentials not yet cached) it says so and leaves the commit in place for
+# the next attempt.
+#
+# Skip it for one commit with `git commit --no-verify`.
+# Disable it entirely with `git config --unset core.hooksPath`.
+
+remote="${AUTOSAVE_REMOTE:-origin}"
+branch=$(git symbolic-ref --short -q HEAD) || exit 0
+
+[ -z "$branch" ] && exit 0
+
+# Nothing to push if the remote is not configured yet.
+git remote get-url "$remote" >/dev/null 2>&1 || exit 0
+
+if git push "$remote" "$branch" >/dev/null 2>&1; then
+  echo "[post-commit] pushed to $remote/$branch"
+else
+  echo "[post-commit] push to $remote/$branch failed — run 'git push' when online"
+fi
+
+exit 0

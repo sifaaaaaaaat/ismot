@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ismot Hair Oil — Naturally Sourced, Healthier Hair</title>
+  <meta name="description" content="Ismot Hair Oil — 100% natural & herbal hair oil. Stronger, shinier, healthier hair naturally." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Scroll driver: creates the scroll length the pinned animation plays over -->
+  <div class="scroll-space" aria-hidden="true"></div>
+
+  <!-- Pinned 900:1200 stage — same ratio as the supplied artwork -->
+  <main class="stage" aria-label="Ismot Hair Oil — cinematic scroll experience">
+
+    <!-- 1. EMPTY WORLD: forest + podium + flowers, no product / text / UI -->
+    <img class="layer base" src="assets/base-empty.webp" alt="" aria-hidden="true" />
+
+    <!-- Camera / light / particle atmospheres -->
+    <canvas id="fx-canvas" class="layer fx" width="900" height="1200"></canvas>
+    <div class="layer rays" id="fx-rays"></div>
+    <div class="layer glow" id="fx-glow"></div>
+    <div class="layer grade" id="fx-grade"></div>
+
+    <!-- 2-3. GOLDEN OIL STREAMS (cut from the original photo) -->
+    <img class="layer splash splash-left"  id="L-splash-left"  src="assets/layer-splash-left.webp"  alt="" aria-hidden="true" />
+    <img class="layer splash splash-right" id="L-splash-right" src="assets/layer-splash-right.webp" alt="" aria-hidden="true" />
+
+    <!-- 4. PRODUCT: the exact Ismot bottle, cropped from the reference -->
+    <img class="layer bottle" id="L-bottle" src="assets/layer-bottle.webp"
+         alt="Ismot Hair Oil 100 ml spray bottle" />
+
+    <!-- 5. BRAND TYPOGRAPHY (frosted letters cut from the reference) -->
+    <img class="layer typo"  id="L-typo"    src="assets/layer-typo-ismot.webp"  alt="" aria-hidden="true" />
+    <img class="layer sprout" id="L-sprout" src="assets/layer-typo-sprout.webp" alt="" aria-hidden="true" />
+
+    <!-- 6. INFORMATION CARDS -->
+    <img class="layer card card-left"  id="L-card-left"  src="assets/layer-card-left.webp"  alt="100% natural ingredients" />
+    <img class="layer card card-right" id="L-card-right" src="assets/layer-card-right.webp" alt="100 ml pure hair care" />
+
+    <!-- 7. NAVIGATION -->
+    <nav class="layer nav" aria-label="Primary">
+      <img id="L-nav-logo"        src="assets/layer-nav-logo.webp"        alt="Ismot Hair Oil home" />
+      <img id="L-nav-about"       src="assets/layer-nav-about.webp"       alt="About" />
+      <img id="L-nav-benefits"    src="assets/layer-nav-benefits.webp"    alt="Benefits" />
+      <img id="L-nav-ingredients" src="assets/layer-nav-ingredients.webp" alt="Ingredients" />
+      <img id="L-nav-cart"        src="assets/layer-nav-cart.webp"        alt="Cart" />
+      <img id="L-nav-menu"        src="assets/layer-nav-menu.webp"        alt="Menu" />
+    </nav>
+
+    <!-- 8. SETTLE: the complete original photograph fades in,
+         guaranteeing the final frame is pixel-identical to the artwork -->
+    <img class="layer settle" id="L-settle" src="assets/settle.webp" alt="" aria-hidden="true" />
+
+    <!-- ORDER NOW button (matches the artwork's pill) -->
+    <a class="layer cta" id="L-cta" href="#order">
+      <span class="cta-pill">Order Now&nbsp;<span class="cta-arrow">&#8594;</span></span>
+    </a>
+
+    <!-- Invisible hotspots for nav interactivity -->
+    <nav class="hotspots" aria-hidden="false">
+      <a class="hotspot spot-logo"        href="#home"        aria-label="Ismot Hair Oil — Home"></a>
+      <a class="hotspot spot-about"       href="#about"       aria-label="About"></a>
+      <a class="hotspot spot-benefits"    href="#benefits"    aria-label="Benefits"></a>
+      <a class="hotspot spot-ingredients" href="#ingredients" aria-label="Ingredients"></a>
+      <a class="hotspot spot-cart"        href="#cart"        aria-label="Shopping bag"></a>
+      <a class="hotspot spot-menu"        href="#menu"        aria-label="Menu"></a>
+    </nav>
+
+    <!-- Scroll progress (0-100%) -->
+    <div class="progress" aria-hidden="true"><i id="progress-bar"></i></div>
+  </main>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+  <script src="assets/layers.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

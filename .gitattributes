@@ -1,0 +1,16 @@
+# Normalise text to LF in the repository; the working tree keeps the platform
+# default, so Windows checkouts do not produce spurious whole-file diffs.
+* text=auto
+
+# Binary assets — never diff, merge or convert these.
+*.webp binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.woff binary
+*.woff2 binary
+*.ttf binary

@@ -1,0 +1,16 @@
+{
+  // Keep the repository in sync with the remote without extra steps: committing
+  // from the Source Control panel stages the current changes and pushes them.
+  // The .githooks/post-commit hook provides the same behaviour outside the
+  // editor; see README.md → "Git workflow & auto-save".
+  "git.enableSmartCommit": true,
+  "git.postCommitCommand": "push",
+  "git.autofetch": true,
+  "git.confirmSync": false,
+
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/package-lock.json": true
+  }
+}

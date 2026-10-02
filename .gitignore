@@ -1,0 +1,51 @@
+# ---------------------------------------------------------------------------
+# Ismot — ignore rules for the whole repo.
+# The Next.js app also ships its own ismot-next/.gitignore; the two are
+# deliberately compatible, so nothing here contradicts it.
+# ---------------------------------------------------------------------------
+
+# ---- dependencies ----
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ---- Next.js / bundler output ----
+.next/
+out/
+build/
+dist/
+coverage/
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# ---- dev servers & logs ----
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ---- env ----
+.env
+.env.*
+!.env.example
+
+# ---- OS / editor cruft ----
+.DS_Store
+Thumbs.db
+desktop.ini
+*.pem
+*.swp
+
+# ---- agent tooling state (machine-local, not project code) ----
+.freebuff/
+
+# ---- python ----
+__pycache__/
+*.pyc

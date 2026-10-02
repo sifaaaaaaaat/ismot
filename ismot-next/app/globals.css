@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/*
+ * Hero scene — one composition whose size is derived from the bottle's real ink
+ * footprint (measured off bottle.webp at its 12deg tilt, see tools/ink_profile.py)
+ * rather than its bounding box: the box keeps the transparent corners the tilt
+ * creates, so sizing from it would shrink the bottle for no reason.
+ *
+ *   the ink reaches 0.0165 * stage above the stage's top
+ *   the stage is a square, so it spans stage + 0.0165 * stage below that
+ *
+ * Budget from the nav down is therefore
+ *   96px (nav band) + 1.0165 * stage + 16px = viewport height
+ * which is the 98.4svh - 110px cap: on a short window the bottle shrinks by
+ * exactly as much as it has to and not a pixel more. At the 1280x960 design
+ * size the cap does not bind and the stage is the plain 720px.
+ *
+ * --stage-top centres the stage while there is room, then pushes it down just
+ * far enough to clear the nav. At the design size that resolves to the same
+ * 120px, so nothing about the approved composition moves.
+ *
+ * --band-top is where the copy and right column start: 0.2333 * stage below the
+ * stage's top (288 - 120 at the design size), so they travel with the bottle
+ * instead of re-anchoring to the viewport on shorter windows.
+ *
+ * The width cap stays in the width property rather than in --stage on purpose:
+ * percentages inside a custom property resolve against whatever property uses
+ * them, so a `360%` term would mean the stage's width in a width context and
+ * the stage's height in the top calculation.
+ */
+.hero-scene {
+  --stage: min(90vmin, 720px, calc(98.4svh - 110px));
+  --stage-top: max(calc((100svh - var(--stage)) / 2), calc(96px + var(--stage) * 0.0165));
+  --band-top: calc(var(--stage-top) + var(--stage) * 0.2333);
+}
+
+.hero-stage {
+  /* Absolute and centred with auto margins, not a transform: the stage must not
+     create a stacking context, or the bottle could not sit above the copy. */
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  top: var(--stage-top);
+  width: min(var(--stage), max(420px, calc(360% - 3560px)));
+}

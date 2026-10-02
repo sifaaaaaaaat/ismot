@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERA Skin — Nourish. 100% Natural Skincare</title>
+  <meta name="description" content="VERA Skin Nourish — a whipped botanical balm with aloe vera, squalane, vitamin E, shea butter and green tea. 100% natural skincare." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- announcement bar -->
+  <div class="ticker" role="note">100% natural · cruelty free · free shipping over $40</div>
+
+  <!-- ============ NAV (mirrors the site in the video) ============ -->
+  <header class="nav" id="nav">
+    <button class="nav__burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#home" class="is-active">Home</a>
+      <a href="#product">Shop</a>
+      <a href="#benefits">About Us</a>
+      <a href="#ingredients">Blog</a>
+    </nav>
+
+    <a class="nav__logo" href="#home" aria-label="VERA — home">VERA</a>
+
+    <div class="nav__tools">
+      <button class="icon-btn" aria-label="Search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </button>
+      <button class="icon-btn" aria-label="Wishlist">
+        <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.8-9A5.6 5.6 0 0 1 12 6.3 5.6 5.6 0 0 1 21.8 12c-2.3 4.4-9.8 9-9.8 9Z"/></svg>
+      </button>
+      <a class="nav__profile" href="#footer">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+        Profile
+      </a>
+    </div>
+  </header>
+
+  <!-- mobile drawer -->
+  <div class="drawer" id="drawer" hidden>
+    <nav aria-label="Mobile">
+      <a href="#home">Home</a>
+      <a href="#product">Shop</a>
+      <a href="#benefits">About Us</a>
+      <a href="#ingredients">Blog</a>
+      <a href="#footer">Profile</a>
+    </nav>
+  </div>
+
+  <main>
+    <!-- ============ HERO: NOURISH + aloe leaves ============ -->
+    <section class="hero" id="home">
+      <div class="hero__inner" id="heroScene">
+        <h1 class="hero__word" data-depth="6">NOURISH</h1>
+        <div class="hero__aloe" aria-hidden="true">
+          <i class="leaf" data-depth="14" style="--h:46vh; --r:-30deg; --x:5%;  --d:7.5s"></i>
+          <i class="leaf" data-depth="20" style="--h:62vh; --r:-17deg; --x:15%; --d:8.5s"></i>
+          <i class="leaf" data-depth="10" style="--h:76vh; --r:-7deg;  --x:28%; --d:6.8s"></i>
+          <i class="leaf" data-depth="24" style="--h:70vh; --r:2deg;   --x:42%; --d:9.2s"></i>
+          <i class="leaf" data-depth="12" style="--h:80vh; --r:11deg;  --x:55%; --d:7.4s"></i>
+          <i class="leaf" data-depth="18" style="--h:60vh; --r:21deg;  --x:70%; --d:8.1s"></i>
+          <i class="leaf" data-depth="8"  style="--h:46vh; --r:31deg;  --x:84%; --d:6.4s"></i>
+        </div>
+      </div>
+
+      <div class="hero__copy">
+        <p class="eyebrow">Vera Skin — 100% natural</p>
+        <p class="hero__sub">Whipped botanical care with simple details that elevate the final look of your skin.</p>
+        <div class="hero__cta">
+          <a class="btn btn--dark" href="#product">Shop Nourish</a>
+          <a class="btn btn--ghost" href="#ingredients">Explore ingredients</a>
+        </div>
+      </div>
+
+      <a class="hero__scroll" href="#product" aria-label="Scroll to product">Scroll
+        <svg viewBox="0 0 24 24"><path d="M12 4v16m0 0-6-6m6 6 6-6"/></svg>
+      </a>
+    </section>
+
+    <!-- ============ PRODUCT SPOTLIGHT: the green jar ============ -->
+    <section class="product" id="product">
+      <span class="product__ghost" aria-hidden="true">NOURISH</span>
+
+      <div class="product__stage" data-reveal>
+        <div class="jar jar--lg" role="img" aria-label="VERA Skin Nourish jar — 100 ml">
+          <div class="jar__lid"><i></i></div>
+          <div class="jar__neck"></div>
+          <div class="jar__body">
+            <div class="jar__label">
+              <div class="jar__brand">VERA<br/>SKIN<br/>NOURISH</div>
+              <div class="jar__meta">
+                <p>Whipped botanical balm with aloe, squalane &amp; green tea for deep, lasting hydration.</p>
+                <p class="jar__fine">Net wt. 100 ml&nbsp;&nbsp;·&nbsp;&nbsp;100% natural</p>
+              </div>
+              <div class="jar__code" aria-hidden="true"></div>
+              <span class="jar__arrow" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+        <i class="jar-shadow" aria-hidden="true"></i>
+
+        <span class="float-pill pill-1">100% Natural</span>
+        <span class="float-pill pill-2">Dermatologist friendly</span>
+        <span class="float-pill pill-3">Zero parabens</span>
+      </div>
+
+      <div class="product__info">
+        <p class="eyebrow">The hero balm</p>
+        <h2>VERA Skin Nourish</h2>
+        <p class="product__desc">One green jar, five botanicals. A rich, fast-absorbing balm that soothes, heals and locks in moisture from morning to midnight.</p>
+        <p class="product__price">$24 <span>· 100 ml</span></p>
+        <div class="product__cta">
+          <button class="btn btn--dark" id="addToBag">Add to bag</button>
+          <span class="bag-note" id="bagNote">Free returns for 30 days</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ INGREDIENTS GRID ============ -->
+    <section class="ingredients" id="ingredients">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">Inside the jar</p>
+        <h2>Five botanicals. Nothing else.</h2>
+      </header>
+
+      <div class="ing-grid">
+        <!-- centre jar (desktop radial layout) -->
+        <div class="ing-center" aria-hidden="true">
+          <div class="jar jar--md">
+            <div class="jar__lid"><i></i></div>
+            <div class="jar__neck"></div>
+            <div class="jar__body"><div class="jar__label"><div class="jar__brand">VERA<br/>SKIN<br/>NOURISH</div><div class="jar__code"></div></div></div>
+          </div>
+          <i class="jar-shadow"></i>
+        </div>
+
+        <article class="ing-card ing-card--aloe" data-reveal>
+          <span class="ing-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><path d="M24 44C13 38 10 28 12 16c8 2 15 8 17 18-1-9 1-16 8-22 5 8 4 18-3 25-3 3-6 5-10 7Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M24 44V26" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+          </span>
+          <h3>Aloe Vera Extract</h3>
+          <p>Provides hydration, soothes irritation, and promotes healing.</p>
+        </article>
+
+        <article class="ing-card ing-card--squalane" data-reveal>
+          <span class="ing-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><ellipse cx="17" cy="30" rx="7" ry="9" transform="rotate(-24 17 30)" fill="none" stroke="currentColor" stroke-width="2.4"/><ellipse cx="31" cy="33" rx="6" ry="8" transform="rotate(18 31 33)" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M24 6c-2 6-2 10 0 14 2-4 2-8 0-14Zm-9 8c1 5 3 8 6 10m20-10c-1 5-3 8-6 10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+          </span>
+          <h3>Squalane</h3>
+          <p>Helps maintain skin's moisture balance and improves skin texture.</p>
+        </article>
+
+        <article class="ing-card ing-card--vitamin" data-reveal>
+          <span class="ing-icon ing-icon--gold" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="2.4"/><text x="24" y="31" text-anchor="middle" font-size="18" font-family="Georgia, serif" font-style="italic" fill="currentColor">E</text></svg>
+          </span>
+          <h3>Vitamin E</h3>
+          <p>Acts as an antioxidant, protecting the skin from free-radical damage and promoting healing.</p>
+        </article>
+
+        <article class="ing-card ing-card--shea" data-reveal>
+          <span class="ing-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><circle cx="18" cy="22" r="6" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="30" cy="18" r="5" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="27" cy="31" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M18 22c3-1 6-1 9 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+          <h3>Shea Butter</h3>
+          <p>Offers rich emollient, deeply moisturising and nourishing the skin.</p>
+        </article>
+
+        <article class="ing-card ing-card--greentea" data-reveal>
+          <span class="ing-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><path d="M24 40C14 36 10 26 14 14c10 2 16 10 16 20 2-6 6-10 12-12-2 10-8 16-18 18Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M24 40V22" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+          </span>
+          <h3>Green Tea Extract</h3>
+          <p>Contains antioxidants and anti-inflammatory properties that calm and protect the skin.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ BENEFITS ============ -->
+    <section class="benefits" id="benefits">
+      <div class="benefits__list">
+        <header class="section-head section-head--left" data-reveal>
+          <p class="eyebrow">Why skin loves it</p>
+          <h2>Everything a balm should do</h2>
+        </header>
+
+        <ul class="benefit" data-reveal>
+          <li class="benefit__icon benefit__icon--blue" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3c3 4.5 6 8 6 11.5a6 6 0 1 1-12 0C6 11 9 7.5 12 3Z"/></svg>
+          </li>
+          <li>
+            <h3>Deep Hydration</h3>
+            <p>Provides long-lasting moisture, keeping skin soft and smooth.</p>
+          </li>
+        </ul>
+
+        <ul class="benefit" data-reveal>
+          <li class="benefit__icon benefit__icon--rose" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9 10h.01M15 10h.01M9.5 15c1.5 1.2 3.5 1.2 5 0"/></svg>
+          </li>
+          <li>
+            <h3>Soothes Irritated Skin</h3>
+            <p>Calms redness and irritation, perfect for sensitive skin.</p>
+          </li>
+        </ul>
+
+        <ul class="benefit" data-reveal>
+          <li class="benefit__icon benefit__icon--sand" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 15c2-1 4-1 6 0s4 1 6 0m-12-4c2-1 4-1 6 0s4 1 6 0M8 7c2-.7 4-.7 6 0"/></svg>
+          </li>
+          <li>
+            <h3>Promotes Skin Healing</h3>
+            <p>Enhances healing of minor cuts, burns, and blemishes.</p>
+          </li>
+        </ul>
+
+        <ul class="benefit" data-reveal>
+          <li class="benefit__icon benefit__icon--green" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3c1.8 2 1.8 4 0 6-1.8-2-1.8-4 0-6Zm0 12c1.8 2 1.8 4 0 6-1.8-2-1.8-4 0-6ZM3 12c2-1.8 4-1.8 6 0-2 1.8-4 1.8-6 0Zm12 0c2-1.8 4-1.8 6 0-2 1.8-4 1.8-6 0Z"/></svg>
+          </li>
+          <li>
+            <h3>Rich in Antioxidants</h3>
+            <p>Fights aging and repairs skin with essential vitamins.</p>
+          </li>
+        </ul>
+      </div>
+
+      <div class="benefits__visual" data-reveal>
+        <div class="benefits__circle">
+          <div class="hand-scene" role="img" aria-label="An open hand holding the VERA Skin Nourish jar">
+            <svg class="hand" viewBox="0 0 260 200" aria-hidden="true">
+              <defs>
+                <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#eab696"/><stop offset="1" stop-color="#d29068"/>
+                </linearGradient>
+              </defs>
+              <path fill="url(#skin)" d="M18 200V96c0-10 8-18 18-18h58c9 0 17 3 24 8l30 21c7 5 9 14 4 21s-14 9-21 4l-14-9h75c8 0 15 7 15 15s-7 15-15 15h-40c6 1 10 7 10 14 0 8-7 15-15 15h-18c6 2 9 7 9 13v5H18Z"/>
+            </svg>
+            <div class="jar jar--sm" aria-hidden="true">
+              <div class="jar__lid"><i></i></div>
+              <div class="jar__neck"></div>
+              <div class="jar__body"><div class="jar__label"><div class="jar__brand">VERA<br/>SKIN<br/>NOURISH</div><div class="jar__code"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer" id="footer">
+    <a class="footer__logo" href="#home">VERA</a>
+    <nav class="footer__links" aria-label="Footer">
+      <a href="#product">Shop</a>
+      <a href="#ingredients">Ingredients</a>
+      <a href="#benefits">About Us</a>
+      <a href="#home">Blog</a>
+    </nav>
+    <p class="footer__note">© 2026 VERA Skin — 100% natural. Simple details that elevate the final look.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
