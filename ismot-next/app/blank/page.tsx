@@ -1,14 +1,20 @@
 import Hero from "../hero";
+import Product from "../product";
 
 /**
- * Blank page — a mirror of the homepage at `/`.
+ * Blank page — a scratch copy of the homepage at `/`.
  *
- * It renders the same <Hero /> component and nothing else, so this route can be
- * used to try things out without touching the approved hero on the homepage.
- * Anything that settles here can be moved into `app/page.tsx` afterwards.
+ * It renders the same <Hero /> and then the new <Product /> section below it,
+ * so the next section can be built and reviewed here without touching the
+ * approved homepage. Anything that settles can be moved into `app/page.tsx`.
  *
  * Route: /blank  (nested under the root layout, so fonts and the shell match `/`)
  */
 export default function Blank() {
-  return <Hero />;
+  return (
+    <>
+      <Hero />
+      <Product />
+    </>
+  );
 }
