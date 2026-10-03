@@ -96,6 +96,10 @@ body {
   --orb-size: min(var(--stage), max(420px, calc(360% - 3560px)));
   --orb-cx: max(calc(var(--orb-size) / 2), 24%);
   --orb-cy: max(calc(var(--stage) / 2), 44%);
+  /* The orb's right edge. Only ever consumed by `left`, a width context, so
+     every percentage inside it (cx's 24%, orb-size's 360% term) resolves
+     against the width. */
+  --orb-right: calc(var(--orb-cx) + var(--orb-size) / 2);
 }
 
 .next-orb {
@@ -105,4 +109,20 @@ body {
   width: var(--orb-size);
   aspect-ratio: 1;
   translate: -50% -50%;
+}
+
+/*
+ * The repeated small-ISMOOT wordmark column (app/next-section.tsx): a vertical
+ * stack of ISMOT lines centred in the panel's right-hand band. Its left edge is
+ * the further of the design's 38% anchor and the orb's right edge plus a 16px
+ * gap — so the column can never run into the circle, at any viewport, by
+ * construction rather than by eye. Same one-per-property rule as above: this
+ * var feeds only `left`.
+ */
+.next-wordmark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: max(38%, calc(var(--orb-right) + 16px));
+  right: 0;
 }

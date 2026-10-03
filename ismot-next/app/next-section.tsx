@@ -31,6 +31,12 @@ import Image from "next/image";
  * it, rather than in the whole scene. It sits before the orb in the DOM with
  * z-0, so — same as the hero — the orb paints over it.
  *
+ * Updated per the latest mark: the giant type is replaced by a COLUMN of small
+ * repeated ISMOT lines (4–6 lines, same black white/20 treatment), centred in
+ * that same right-hand band, whose left edge is derived from the orb's right
+ * edge so the column never overlaps the circle. See .next-wordmark in
+ * globals.css.
+ *
  * One viewport tall (`h-svh`, matching the hero scene) and `flex-none` so the
  * app shell's flex column cannot squeeze it.
  *
@@ -45,13 +51,21 @@ export default function NextSection() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -scale-y-100 bg-[url('/hero-bg.jpg')] bg-cover bg-center bg-no-repeat"
       />
-      {/* The hero's giant watermark, same type treatment, centred in the
-          right-hand band. z-0 + DOM order before the orb keeps it behind the
-          orb, as in the hero. No opacity-0: nothing animates here yet. */}
+      {/* The repeated small-ISMOOT wordmark column — same black white/20
+          treatment as the hero's watermark, shrunk and repeated down the
+          right-hand band. The band's left edge moves with the orb's right edge
+          (+16px gap), so no line can ever touch the circle. Hidden below sm:
+          there the orb spans ~90% of the width, the band collapses, and the
+          only way to keep the no-overlap promise is to not render the column
+          (same call as the product section's floating pills). */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-[38%] right-0 z-0 flex select-none flex-col items-center justify-center whitespace-nowrap text-[19vw] font-black uppercase leading-[0.9] text-white/20"
+        className="next-wordmark pointer-events-none z-0 hidden select-none flex-col items-center justify-center gap-[0.35em] whitespace-nowrap text-[clamp(0.9rem,1.5vw,1.35rem)] font-black uppercase leading-none tracking-[0.22em] text-white/20 sm:flex"
       >
+        <span>Ismot</span>
+        <span>Ismot</span>
+        <span>Ismot</span>
+        <span>Ismot</span>
         <span>Ismot</span>
         <span>Ismot</span>
       </span>
