@@ -69,3 +69,40 @@ body {
   top: var(--stage-top);
   width: min(var(--stage), max(420px, calc(360% - 3560px)));
 }
+
+/*
+ * Next scene — the panel below the hero (app/next-section.tsx).
+ *
+ * The orb is placed by its CENTRE point (--orb-cx, --orb-cy) and centred with
+ * a translate, which keeps every percentage in exactly one axis: cx feeds only
+ * `left` (so 24% resolves against the width), cy feeds only `top` (so 44%
+ * resolves against the height), and --orb-size feeds only `width`. That last
+ * split matters — see the .hero-scene comment above: a percentage inside a
+ * custom property resolves against whichever property consumes it, so reusing
+ * --orb-size in `top` would re-read its 360% term against the height and move
+ * the orb. --orb-size repeats the hero's --stage formula AND .hero-stage's
+ * width cap so the orb is exactly the hero's circle at every viewport; if
+ * either changes there, change it here too.
+ *
+ * cx/cy are clamped inward so the orb never slides off-screen: cx's floor is
+ * half the ORB (safe — cx feeds only `left`, a width context, so --orb-size's
+ * percentage term resolves against the width), cy's floor is half the stage
+ * (orb-size's percentages must not reach `top`). Without the clamps the 24%/44%
+ * anchors would push the orb's left/top half past the edge on narrow/short
+ * windows.
+ */
+.next-scene {
+  --stage: min(90vmin, 720px, calc(98.4svh - 110px));
+  --orb-size: min(var(--stage), max(420px, calc(360% - 3560px)));
+  --orb-cx: max(calc(var(--orb-size) / 2), 24%);
+  --orb-cy: max(calc(var(--stage) / 2), 44%);
+}
+
+.next-orb {
+  position: absolute;
+  top: var(--orb-cy);
+  left: var(--orb-cx);
+  width: var(--orb-size);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+}

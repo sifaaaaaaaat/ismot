@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 /**
  * The screen directly below the hero.
  *
@@ -5,7 +7,7 @@
  * the two screens read as one continuous surface rather than two panels with a
  * seam between them.
  *
- * Why mirroring is what removes the seam: `.hero-bg.jpg` is a vertical
+ * Why mirroring is what removes the seam: `hero-bg.jpg` is a vertical
  * gradient — palest at its top, deepest at its bottom — and `cover` maps its
  * height onto the viewport, so the hero's scene ENDS on the image's deepest
  * row. Painting the same image upright here would restart it at the palest
@@ -18,6 +20,11 @@
  * The flip lives on an inner layer, never on the section, so content added
  * here later is not mirrored with it.
  *
+ * The white orb is the hero's circle-white.webp at the hero's --stage size
+ * (see .next-scene / .next-orb in globals.css), resting at the hero's orb
+ * opacity of 0.55, centred on the spot the design marks on the panel's
+ * left-hand half.
+ *
  * One viewport tall (`h-svh`, matching the hero scene) and `flex-none` so the
  * app shell's flex column cannot squeeze it.
  *
@@ -25,12 +32,24 @@
  */
 export default function NextSection() {
   return (
-    <section className="relative h-svh w-full flex-none">
+    <section className="next-scene relative h-svh w-full flex-none overflow-hidden">
       {/* -scale-y-100 = scaleY(-1): the section's backdrop continues the
           gradient the hero's scene ended on. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -scale-y-100 bg-[url('/hero-bg.jpg')] bg-cover bg-center bg-no-repeat"
+      />
+      {/* The hero's orb, parked on the marked spot. pointer-events-none so the
+          empty panel stays inert; opacity-55 = the hero orb's resting value.
+          next/image (not a plain <img>) because nothing animates it — the
+          hero's three <img>s stay plain only so GSAP can transform them. */}
+      <Image
+        src="/circle-white.webp"
+        alt=""
+        aria-hidden="true"
+        width={1200}
+        height={1200}
+        className="next-orb pointer-events-none select-none opacity-55"
       />
     </section>
   );
