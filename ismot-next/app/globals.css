@@ -69,7 +69,7 @@ body {
 .hero-backdrop {
   position: absolute;
   inset: -8%;
-  background-image: url("/hero-poster.webp");
+  background-image: url("/hero-2x3.webp");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -98,9 +98,9 @@ body {
     radial-gradient(60% 34% at 50% 100%, rgba(198, 148, 74, 0.14), transparent 72%);
 }
 
-/* The artwork file is 941x2196: the 9:16 poster with 262px of scene added above
-   and below, mirrored from its own edges. Phones are taller than 9:16, so
-   without that scene the whole poster always left a band at each end.
+/* The artwork file is 1024x2389: the 2:3 poster with 426px of scene added above
+   and below it. Phones are far taller than 2:3, so without that scene the whole
+   poster always left a band at each end.
 
    On phones the file is laid over the whole screen and is deliberately taller
    than the viewport; .hero-root clips the surplus evenly, which leaves the
@@ -109,7 +109,7 @@ body {
 .hero-poster {
   position: relative;
   width: 100vw;
-  height: calc(100vw * 2196 / 941);
+  height: calc(100vw * 2389 / 1024);
   overflow: hidden;
 }
 
@@ -119,18 +119,18 @@ body {
   position: absolute;
   left: 0;
   width: 100%;
-  top: 11.93%;
-  height: 76.09%;
+  top: 17.83%;
+  height: 64.29%;
 }
 
 /* Wider screens show the poster whole, finished like a framed print: the added
-   scene is cropped away by object-fit, so this box is exactly the 9:16 poster. */
+   scene is cropped away by object-fit, so this box is exactly the 2:3 poster. */
 @media (min-aspect-ratio: 9 / 16) {
   .hero-poster {
     width: auto;
     height: 100vh; /* fallback for browsers without svh */
-    height: min(100svh, calc(100vw * 1671 / 941));
-    aspect-ratio: 941 / 1671;
+    height: min(100svh, calc(100vw * 1536 / 1024));
+    aspect-ratio: 1024 / 1536;
     margin-inline: auto;
     border-radius: 18px;
     box-shadow:

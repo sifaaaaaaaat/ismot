@@ -1,27 +1,28 @@
-"""Extend the 9:16 poster into a 9:21 canvas so a phone screen fills edge to edge.
+"""Extend the 2:3 poster into a 9:21 canvas so a phone screen fills edge to edge.
 
-The painted poster is 941x1671 (9:16). Phones are taller — a 390x844 screen is
-about 9:19.5 — so showing the whole artwork always leaves a band above and below
-it. This adds 262px of scene above and below by mirroring and blurring the
-artwork's own edges: the picture stays continuous and no painted control is
-cropped. The core poster keeps exactly the same size and position on screen.
+The painted poster is 1024x1536 (2:3). Phones are much taller — a 390x844 screen
+is about 9:19.5 — so showing the whole artwork always leaves a band above and
+below it. This adds 426px of scene above and 427px below by mirroring the top
+edge and smearing the table's own colours at the bottom: the picture stays
+continuous and no painted control is cropped. The core poster keeps exactly the
+same size and position on screen.
 
     python tools/build_hero_poster.py
 
-Writes ismot-next/public/hero-poster.webp and two edge crops for inspection.
+Writes ismot-next/public/hero-2x3.webp and two edge crops for inspection.
 """
 
 from PIL import Image, ImageFilter
 
-SRC = "assets/ismot-hero-9x16.png"
-OUT = "ismot-next/public/hero-poster.webp"
+SRC = "assets/ismot-hero-2x3.png"
+OUT = "ismot-next/public/hero-2x3.webp"
 
-PAD_TOP = 262
-PAD_BOTTOM = 263
-STRIP = 110  # rows of the artwork mirrored into each band
-BLUR = 26
-SEAM_HALF = 80
-SEAM_BLUR = 9
+PAD_TOP = 426
+PAD_BOTTOM = 427
+STRIP = 150  # rows of the artwork mirrored into the top band
+BLUR = 30
+SEAM_HALF = 90
+SEAM_BLUR = 11
 
 
 def band(art: Image.Image, rows: tuple[int, int], height: int) -> Image.Image:
@@ -35,9 +36,9 @@ def band(art: Image.Image, rows: tuple[int, int], height: int) -> Image.Image:
 def smear(art: Image.Image, rows: tuple[int, int], height: int) -> Image.Image:
     """Collapse `rows` to one row of colour, then stretch it downwards.
 
-    Used for the bottom band: mirroring the leaves there left a green blob, but
-    the table's own colours smeared into a soft vertical wash read as depth of
-    field and keep the horizontal tones of the wood.
+    Used for the bottom band: mirroring the leaves there leaves a green blob,
+    but the table's own colours smeared into a soft vertical wash read as depth
+    of field and keep the horizontal tones of the wood.
     """
     top, bottom = rows
     strip = art.crop((0, top, art.width, bottom))
@@ -61,7 +62,7 @@ def blend_seam(canvas: Image.Image, y: int) -> None:
     canvas.paste(band_img, (box[0], box[1]), mask)
 
 
-def vignette(canvas: Image.Image, depth: int = 150, edge: float = 0.88) -> None:
+def vignette(canvas: Image.Image, depth: int = 170, edge: float = 0.86) -> None:
     """Slightly darken the very top and bottom so the added scene falls away."""
     overlay = Image.new("L", (1, depth))
     for row in range(depth):
@@ -93,11 +94,13 @@ def main() -> None:
     print(f"{OUT}: {canvas.width}x{canvas.height} aspect {canvas.width / canvas.height:.4f}")
     print(f"poster sits at y {PAD_TOP}..{PAD_TOP + height} "
           f"({PAD_TOP / canvas_h * 100:.2f}% .. {(PAD_TOP + height) / canvas_h * 100:.2f}%)")
+    print(f"hero-content: top {PAD_TOP / canvas_h * 100:.2f}% "
+          f"height {height / canvas_h * 100:.2f}%")
 
-    for name, box in (("tools/_edge_top.jpg", (0, 0, width, 460)),
-                      ("tools/_edge_bottom.jpg", (0, canvas_h - 460, width, canvas_h))):
+    for name, box in (("tools/_edge_top.jpg", (0, 0, width, 470)),
+                      ("tools/_edge_bottom.jpg", (0, canvas_h - 470, width, canvas_h))):
         crop = canvas.crop(box)
-        crop.thumbnail((520, 400), Image.LANCZOS)
+        crop.thumbnail((520, 420), Image.LANCZOS)
         crop.save(name, quality=88)
 
 
