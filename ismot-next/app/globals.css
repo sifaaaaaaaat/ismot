@@ -49,7 +49,7 @@ body {
 /* ==========================================================================
    Homepage hero
    --------------------------------------------------------------------------
-   The artwork is a single 2477x3264 poster. Every control the visitor can see
+   The artwork is a single 941x1671 poster. Every control the visitor can see
    is painted into it, so the hero renders the poster at its own aspect ratio
    and covers each painted control with a real button whose box is a percentage
    of that poster. Because the poster element has exactly the artwork's ratio,
@@ -69,7 +69,7 @@ body {
 .hero-backdrop {
   position: absolute;
   inset: -8%;
-  background-image: url("/hero-900.webp");
+  background-image: url("/hero-poster.webp");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -101,8 +101,8 @@ body {
 .hero-poster {
   position: relative;
   height: 100vh; /* fallback for browsers without svh */
-  height: min(100svh, calc(100vw * 3264 / 2477));
-  aspect-ratio: 2477 / 3264;
+  height: min(100svh, calc(100vw * 1671 / 941));
+  aspect-ratio: 941 / 1671;
   margin-inline: auto;
   overflow: hidden;
 }

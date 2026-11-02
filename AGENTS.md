@@ -44,8 +44,8 @@ warning just to make them pass.
   a control moves, re-measure — do not nudge pixels until it "looks right".
 - The bag and menu hit boxes meet at 92.75 %; they must never overlap, or the
   wrong control receives the tap.
-- **Show the whole artwork.** Sizing is "contain" (`min(100svh, 100vw * 3264 /
-  2477)`); never crop the bottle, the CTA or the labels on mobile to fill the
+- **Show the whole artwork.** Sizing is "contain" (`min(100svh, 100vw * 1671 /
+  941)`); never crop the bottle, the CTA or the labels on mobile to fill the
   screen. The blurred backdrop fills the rest.
 - Info panels are overlays over the hero, not new page sections.
 

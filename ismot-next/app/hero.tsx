@@ -8,11 +8,11 @@ import Wordmark from "./wordmark";
 /**
  * Homepage — the promotional artwork, full screen and nothing else.
  *
- * Everything the visitor can see is painted into one 2477x3264 poster, so the
+ * Everything the visitor can see is painted into one 941x1671 poster, so the
  * hero renders that poster at its own aspect ratio and covers each painted
  * control with a real button. The boxes below are percentages of the poster,
- * measured from the artwork's own layer manifest, so the hit areas stay on the
- * painted pixels at every viewport size.
+ * measured from the artwork itself (tools/measure_hero.py), so the hit areas
+ * stay on the painted pixels at every viewport size.
  *
  * The artwork is shown whole (never cropped): on phones it fills the width, on
  * desktop it fills the height, and a blurred copy of itself fills the rest of
@@ -21,17 +21,14 @@ import Wordmark from "./wordmark";
 
 type Box = { left: number; top: number; width: number; height: number };
 
-/* Measured from the poster. Slightly larger than the painted control so touch
-   targets are usable, but never overlapping: the bag and menu icons sit right
-   next to each other, so their boxes meet at 92.75%. */
+/* Measured from the poster. Slightly larger than the painted control so the
+   touch targets are comfortable, but never overlapping: the bag and menu icons
+   sit close together, so their boxes stop short of one another. */
 const HOTSPOTS = {
-  order: { left: 37, top: 91.2, width: 30.8, height: 8.8 },
-  bag: { left: 85.6, top: 0, width: 7.15, height: 8 },
-  menu: { left: 92.75, top: 0, width: 6.9, height: 8 },
-  logo: { left: 0.4, top: 0, width: 14.9, height: 8 },
-  about: { left: 23.6, top: 0, width: 12.4, height: 8 },
-  benefits: { left: 40.1, top: 0, width: 14.9, height: 8 },
-  ingredients: { left: 58.2, top: 0, width: 18.6, height: 8 },
+  order: { left: 26.2, top: 88.6, width: 46.4, height: 7.9 },
+  bag: { left: 75.8, top: 1.4, width: 8.2, height: 6.2 },
+  menu: { left: 84.4, top: 1.4, width: 10, height: 6.2 },
+  logo: { left: 3.4, top: 0.4, width: 26.6, height: 9.2 },
 } satisfies Record<string, Box>;
 
 const boxStyle = (box: Box) => ({
@@ -180,7 +177,7 @@ export default function Hero() {
 
       <div className="hero-poster">
         <Image
-          src="/hero-1600.webp"
+          src="/hero-poster.webp"
           alt="Ismot Hair Oil — a 100 ml bottle of golden herbal hair oil on a stone plinth, surrounded by hibiscus, rosemary and almond, beneath a large Ismot wordmark, with labels reading 100% natural ingredients and 100 ml pure hair care."
           fill
           priority
@@ -222,35 +219,6 @@ export default function Hero() {
           aria-label="Ismot Hair Oil — home"
         />
 
-        <button
-          type="button"
-          className="hero-hit"
-          style={boxStyle(HOTSPOTS.about)}
-          onClick={() => openOverlay("about")}
-          aria-haspopup="dialog"
-        >
-          <span className="sr-only">About Ismot</span>
-        </button>
-
-        <button
-          type="button"
-          className="hero-hit"
-          style={boxStyle(HOTSPOTS.benefits)}
-          onClick={() => openOverlay("benefits")}
-          aria-haspopup="dialog"
-        >
-          <span className="sr-only">Benefits</span>
-        </button>
-
-        <button
-          type="button"
-          className="hero-hit"
-          style={boxStyle(HOTSPOTS.ingredients)}
-          onClick={() => openOverlay("ingredients")}
-          aria-haspopup="dialog"
-        >
-          <span className="sr-only">Ingredients</span>
-        </button>
       </div>
 
       {mounted && (

@@ -47,7 +47,7 @@ Other scripts, from `ismot-next/`:
 
 ## Homepage: the poster hero
 
-`app/hero.tsx` renders `public/hero-1600.webp` — the 2477 × 3264 promotional
+`app/hero.tsx` renders `public/hero-poster.webp` — the 941 × 1671 promotional
 artwork — at its own aspect ratio, and lays **real buttons over the controls
 that are painted into it**:
 
@@ -78,7 +78,7 @@ image fills it — the percentages then resolve against the same box the artwork
 is drawn into at every viewport size. The bag and menu boxes deliberately meet
 at 92.75 % rather than overlapping.
 
-The poster is shown **whole**: `height: min(100svh, 100vw * 3264 / 2477)`, so it
+The poster is shown **whole**: `height: min(100svh, 100vw * 1671 / 941)`, so it
 fills the width on phones and the height on desktop, never cropping the bottle
 or the CTA. The remaining space is filled by a blurred, darkened copy of the
 same artwork (`.hero-backdrop`) plus a warm glow and vignette, so the bands read
@@ -216,7 +216,7 @@ ismot-next/
 │   ├── orders.ts           → storage (Supabase | SQLite)
 │   ├── admin-auth.ts       → password + signed session cookie
 │   └── rate-limit.ts       → fixed-window limiter
-├── public/                 → hero-1600.webp, hero-900.webp, bottle.webp
+├── public/                 → hero-poster.webp, bottle.webp
 └── supabase/schema.sql
 ```
 

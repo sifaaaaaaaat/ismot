@@ -43,7 +43,7 @@ above. The service-role key is server-only and is never sent to the browser.
 
 ## How the homepage works
 
-The hero is one 2477 × 3264 poster. Every control in it is painted into the
+The hero is one 941 × 1671 poster. Every control in it is painted into the
 image, so the page renders the poster at its own aspect ratio and places **real
 buttons over the painted controls**, positioned as percentages of the poster
 (`HOTSPOTS` in `ismot-next/app/hero.tsx`):
