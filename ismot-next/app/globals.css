@@ -1,128 +1,443 @@
 @import "tailwindcss";
 
+/*
+ * Ismot — brand tokens.
+ * The palette is sampled from the promotional artwork: forest greens for the
+ * surfaces, warm gold for anything the visitor is meant to act on.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --forest-deep: #07120a;
+  --forest: #0c1a0c;
+  --moss: #17310f;
+  --gold: #d8b877;
+  --gold-soft: #efdcb0;
+  --cream: #f6efdd;
+  --sage: #a9bb9c;
+  --danger: #e79a83;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-forest-deep: var(--forest-deep);
+  --color-forest: var(--forest);
+  --color-moss: var(--moss);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-cream: var(--cream);
+  --color-sage: var(--sage);
+  --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-cormorant);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--forest-deep);
+  color: var(--cream);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  overscroll-behavior-y: none;
 }
 
-/*
- * Hero scene — one composition whose size is derived from the bottle's real ink
- * footprint (measured off bottle.webp at its 12deg tilt, see tools/ink_profile.py)
- * rather than its bounding box: the box keeps the transparent corners the tilt
- * creates, so sizing from it would shrink the bottle for no reason.
- *
- *   the ink reaches 0.0165 * stage above the stage's top
- *   the stage is a square, so it spans stage + 0.0165 * stage below that
- *
- * Budget from the nav down is therefore
- *   96px (nav band) + 1.0165 * stage + 16px = viewport height
- * which is the 98.4svh - 110px cap: on a short window the bottle shrinks by
- * exactly as much as it has to and not a pixel more. At the 1280x960 design
- * size the cap does not bind and the stage is the plain 720px.
- *
- * --stage-top centres the stage while there is room, then pushes it down just
- * far enough to clear the nav. At the design size that resolves to the same
- * 120px, so nothing about the approved composition moves.
- *
- * --band-top is where the copy and right column start: 0.2333 * stage below the
- * stage's top (288 - 120 at the design size), so they travel with the bottle
- * instead of re-anchoring to the viewport on shorter windows.
- *
- * The width cap stays in the width property rather than in --stage on purpose:
- * percentages inside a custom property resolve against whatever property uses
- * them, so a `360%` term would mean the stage's width in a width context and
- * the stage's height in the top calculation.
- */
-.hero-scene {
-  --stage: min(90vmin, 720px, calc(98.4svh - 110px));
-  --stage-top: max(calc((100svh - var(--stage)) / 2), calc(96px + var(--stage) * 0.0165));
-  --band-top: calc(var(--stage-top) + var(--stage) * 0.2333);
+::selection {
+  background: rgba(216, 184, 119, 0.35);
+  color: #fff;
 }
 
-.hero-stage {
-  /* Absolute and centred with auto margins, not a transform: the stage must not
-     create a stacking context, or the bottle could not sit above the copy. */
+/* ==========================================================================
+   Homepage hero
+   --------------------------------------------------------------------------
+   The artwork is a single 2477x3264 poster. Every control the visitor can see
+   is painted into it, so the hero renders the poster at its own aspect ratio
+   and covers each painted control with a real button whose box is a percentage
+   of that poster. Because the poster element has exactly the artwork's ratio,
+   those percentages land on the painted pixels at every viewport size.
+
+   Sizing is "contain": the poster is as large as the viewport allows without
+   cropping the bottle or the CTA, and the blurred copy of itself behind it
+   fills the rest of the screen with the same palette.
+   ========================================================================== */
+
+.hero-root {
+  position: relative;
+  isolation: isolate;
+  background: var(--forest-deep);
+}
+
+.hero-backdrop {
   position: absolute;
-  left: 0;
-  right: 0;
+  inset: -8%;
+  background-image: url("/hero-900.webp");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: blur(38px) saturate(1.2) brightness(0.6);
+  transform: scale(1.06);
+  pointer-events: none;
+}
+
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(7, 18, 10, 0.42) 0%, rgba(7, 18, 10, 0.08) 35%, rgba(7, 18, 10, 0.55) 100%),
+    radial-gradient(120% 80% at 50% 45%, transparent 48%, rgba(4, 10, 5, 0.4) 100%);
+}
+
+/* Warm light spilling out from behind the poster, so the bands above and below
+   it read as part of the same lit scene rather than empty margins. */
+.hero-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(55% 32% at 22% 10%, rgba(255, 214, 140, 0.16), transparent 70%),
+    radial-gradient(60% 34% at 50% 100%, rgba(198, 148, 74, 0.14), transparent 72%);
+}
+
+.hero-poster {
+  position: relative;
+  height: 100vh; /* fallback for browsers without svh */
+  height: min(100svh, calc(100vw * 3264 / 2477));
+  aspect-ratio: 2477 / 3264;
   margin-inline: auto;
-  top: var(--stage-top);
-  width: min(var(--stage), max(420px, calc(360% - 3560px)));
+  overflow: hidden;
 }
 
-/*
- * Next scene — the panel below the hero (app/next-section.tsx).
- *
- * The orb is placed by its CENTRE point (--orb-cx, --orb-cy) and centred with
- * a translate, which keeps every percentage in exactly one axis: cx feeds only
- * `left` (so 24% resolves against the width), cy feeds only `top` (so 44%
- * resolves against the height), and --orb-size feeds only `width`. That last
- * split matters — see the .hero-scene comment above: a percentage inside a
- * custom property resolves against whichever property consumes it, so reusing
- * --orb-size in `top` would re-read its 360% term against the height and move
- * the orb. --orb-size repeats the hero's --stage formula AND .hero-stage's
- * width cap so the orb is exactly the hero's circle at every viewport; if
- * either changes there, change it here too.
- *
- * cx/cy are clamped inward so the orb never slides off-screen: cx's floor is
- * half the ORB (safe — cx feeds only `left`, a width context, so --orb-size's
- * percentage term resolves against the width), cy's floor is half the stage
- * (orb-size's percentages must not reach `top`). Without the clamps the 24%/44%
- * anchors would push the orb's left/top half past the edge on narrow/short
- * windows.
- */
-.next-scene {
-  --stage: min(90vmin, 720px, calc(98.4svh - 110px));
-  --orb-size: min(var(--stage), max(420px, calc(360% - 3560px)));
-  --orb-cx: max(calc(var(--orb-size) / 2), 24%);
-  --orb-cy: max(calc(var(--stage) / 2), 44%);
-  /* The orb's right edge. Only ever consumed by `left`, a width context, so
-     every percentage inside it (cx's 24%, orb-size's 360% term) resolves
-     against the width. */
-  --orb-right: calc(var(--orb-cx) + var(--orb-size) / 2);
+/* Once the viewport is wider than the artwork it no longer touches the edges,
+   so it can be finished like a framed print instead of a cropped photo. */
+@media (min-aspect-ratio: 3 / 4) {
+  .hero-poster {
+    border-radius: 18px;
+    box-shadow:
+      0 34px 90px rgba(0, 0, 0, 0.62),
+      0 0 0 1px rgba(216, 184, 119, 0.16);
+  }
 }
 
-.next-orb {
+.hero-art {
+  object-fit: cover;
+  object-position: center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Invisible hit boxes sitting on the painted controls. */
+.hero-hit {
   position: absolute;
-  top: var(--orb-cy);
-  left: var(--orb-cx);
-  width: var(--orb-size);
-  aspect-ratio: 1;
-  translate: -50% -50%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 14px;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.22s ease,
+    box-shadow 0.22s ease;
 }
 
-/*
- * The repeated small-ISMOOT wordmark column (app/next-section.tsx): a vertical
- * stack of ISMOT lines centred in the panel's right-hand band. Its left edge is
- * the further of the design's 38% anchor and the orb's right edge plus a 16px
- * gap — so the column can never run into the circle, at any viewport, by
- * construction rather than by eye. Same one-per-property rule as above: this
- * var feeds only `left`.
- */
-.next-wordmark {
+.hero-hit:hover {
+  background-color: rgba(255, 246, 224, 0.12);
+}
+
+.hero-hit:active {
+  background-color: rgba(255, 246, 224, 0.22);
+}
+
+.hero-hit:focus-visible {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 3px;
+  background-color: rgba(255, 246, 224, 0.14);
+}
+
+.hero-hit--pill {
+  border-radius: 999px;
+}
+
+/* ==========================================================================
+   Menu + information overlays
+   ========================================================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  touch-action: manipulation;
+}
+
+.overlay__backdrop {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: max(38%, calc(var(--orb-right) + 16px));
-  right: 0;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: rgba(3, 9, 4, 0.66);
+  backdrop-filter: blur(7px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+
+.overlay[data-open="true"] .overlay__backdrop {
+  opacity: 1;
+}
+
+.side-panel {
+  position: relative;
+  margin-left: auto;
+  display: flex;
+  height: 100%;
+  width: min(420px, 92vw);
+  flex-direction: column;
+  background:
+    radial-gradient(90% 55% at 100% 0%, rgba(216, 184, 119, 0.16), transparent 70%),
+    linear-gradient(180deg, #12270f 0%, #081409 100%);
+  border-left: 1px solid rgba(216, 184, 119, 0.24);
+  box-shadow: -30px 0 80px rgba(0, 0, 0, 0.5);
+  transform: translateX(100%);
+  transition: transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
+  overscroll-behavior: contain;
+}
+
+.overlay[data-open="true"] .side-panel {
+  transform: translateX(0);
+}
+
+.info-panel {
+  position: relative;
+  margin: auto;
+  width: min(560px, calc(100vw - 2.25rem));
+  max-height: min(86svh, 760px);
+  overflow-y: auto;
+  border-radius: 24px;
+  border: 1px solid rgba(216, 184, 119, 0.28);
+  background:
+    radial-gradient(80% 50% at 50% 0%, rgba(216, 184, 119, 0.14), transparent 72%),
+    linear-gradient(180deg, #14290f 0%, #081409 100%);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.65);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  opacity: 0;
+  transform: translateY(16px) scale(0.985);
+  transition:
+    opacity 0.3s ease,
+    transform 0.36s cubic-bezier(0.22, 0.61, 0.36, 1);
+  overscroll-behavior: contain;
+}
+
+.overlay[data-open="true"] .info-panel {
+  opacity: 1;
+  transform: none;
+}
+
+.overlay-title {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+}
+
+/* ==========================================================================
+   Order page
+   ========================================================================== */
+
+.order-shell {
+  background:
+    radial-gradient(110% 65% at 50% 0%, rgba(42, 74, 30, 0.55) 0%, transparent 60%),
+    radial-gradient(80% 50% at 100% 100%, rgba(216, 184, 119, 0.1) 0%, transparent 65%),
+    linear-gradient(180deg, #0e1f0c 0%, #07120a 62%, #060f08 100%);
+}
+
+.field {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(216, 184, 119, 0.22);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.9rem 1rem;
+  color: var(--cream);
+  font-size: 16px; /* keeps iOS from zooming the page on focus */
+  line-height: 1.5;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.field::placeholder {
+  color: rgba(246, 239, 221, 0.34);
+}
+
+.field:hover {
+  border-color: rgba(216, 184, 119, 0.4);
+}
+
+.field:focus {
+  border-color: rgba(216, 184, 119, 0.75);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 3px rgba(216, 184, 119, 0.14);
+}
+
+.field[aria-invalid="true"] {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(231, 154, 131, 0.12);
+}
+
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  padding: 1rem 1.75rem;
+  background: linear-gradient(180deg, #f2e2bd 0%, #d8b877 100%);
+  color: #10240c;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  transition:
+    filter 0.2s ease,
+    transform 0.14s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn-gold:hover {
+  filter: brightness(1.06);
+}
+
+.btn-gold:active {
+  transform: translateY(1px) scale(0.996);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.38);
+}
+
+.btn-gold:focus-visible {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 3px;
+}
+
+.btn-gold:disabled {
+  cursor: progress;
+  filter: saturate(0.7) brightness(0.85);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(216, 184, 119, 0.4);
+  padding: 0.85rem 1.5rem;
+  color: var(--gold-soft);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.btn-ghost:hover {
+  background: rgba(216, 184, 119, 0.12);
+  border-color: rgba(216, 184, 119, 0.7);
+}
+
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 3px;
+}
+
+/* ==========================================================================
+   Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-poster {
+    animation: hero-in 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .hero-hit {
+    animation: hit-in 0.55s ease both;
+    animation-delay: 0.28s;
+  }
+
+  .hero-hit:nth-of-type(2) {
+    animation-delay: 0.34s;
+  }
+  .hero-hit:nth-of-type(3) {
+    animation-delay: 0.38s;
+  }
+  .hero-hit:nth-of-type(4) {
+    animation-delay: 0.42s;
+  }
+  .hero-hit:nth-of-type(5) {
+    animation-delay: 0.46s;
+  }
+  .hero-hit:nth-of-type(6) {
+    animation-delay: 0.5s;
+  }
+  .hero-hit:nth-of-type(7) {
+    animation-delay: 0.54s;
+  }
+
+  .page-fade {
+    animation: page-in 0.42s ease both;
+  }
+
+  .spinner {
+    animation: spin 0.7s linear infinite;
+  }
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: scale(0.986);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hit-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Thin, dark scrollbar so the long order page keeps the premium surface. */
+.order-shell::-webkit-scrollbar {
+  width: 10px;
+}
+.order-shell::-webkit-scrollbar-thumb {
+  background: rgba(216, 184, 119, 0.3);
+  border-radius: 999px;
 }

@@ -1,462 +1,425 @@
 "use client";
 
-import { useRef } from "react";
-import { gsap, useGSAP } from "./gsap";
+import Image from "next/image";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Wordmark from "./wordmark";
 
-function LeafIcon({ className }: { className?: string }) {
+/**
+ * Homepage — the promotional artwork, full screen and nothing else.
+ *
+ * Everything the visitor can see is painted into one 2477x3264 poster, so the
+ * hero renders that poster at its own aspect ratio and covers each painted
+ * control with a real button. The boxes below are percentages of the poster,
+ * measured from the artwork's own layer manifest, so the hit areas stay on the
+ * painted pixels at every viewport size.
+ *
+ * The artwork is shown whole (never cropped): on phones it fills the width, on
+ * desktop it fills the height, and a blurred copy of itself fills the rest of
+ * the screen with the same forest/gold palette.
+ */
+
+type Box = { left: number; top: number; width: number; height: number };
+
+/* Measured from the poster. Slightly larger than the painted control so touch
+   targets are usable, but never overlapping: the bag and menu icons sit right
+   next to each other, so their boxes meet at 92.75%. */
+const HOTSPOTS = {
+  order: { left: 37, top: 91.2, width: 30.8, height: 8.8 },
+  bag: { left: 85.6, top: 0, width: 7.15, height: 8 },
+  menu: { left: 92.75, top: 0, width: 6.9, height: 8 },
+  logo: { left: 0.4, top: 0, width: 14.9, height: 8 },
+  about: { left: 23.6, top: 0, width: 12.4, height: 8 },
+  benefits: { left: 40.1, top: 0, width: 14.9, height: 8 },
+  ingredients: { left: 58.2, top: 0, width: 18.6, height: 8 },
+} satisfies Record<string, Box>;
+
+const boxStyle = (box: Box) => ({
+  left: `${box.left}%`,
+  top: `${box.top}%`,
+  width: `${box.width}%`,
+  height: `${box.height}%`,
+});
+
+type PanelKey = "about" | "benefits" | "ingredients";
+type OverlayKey = PanelKey | "menu";
+
+const PANELS: Record<
+  PanelKey,
+  { eyebrow: string; title: string; intro: string; points?: { title: string; body: string }[]; note?: string }
+> = {
+  about: {
+    eyebrow: "Our story",
+    title: "Rooted in nature",
+    intro:
+      "Ismot began with one belief: healthy hair should not need a shelf of chemicals. It needs good oil, pressed from good plants.",
+    points: [
+      {
+        title: "One bottle, done properly",
+        body: "A single 100 ml spray of naturally sourced herbal oil — light enough for every day, rich enough to make a difference.",
+      },
+      {
+        title: "Made for real routines",
+        body: "Spray it on, massage it in, leave it or wash it out. No complicated regimes, no ten-step rituals.",
+      },
+    ],
+    note: "100% natural · No parabens · No silicones · Cruelty free",
+  },
+  benefits: {
+    eyebrow: "What it does",
+    title: "For stronger, shinier hair",
+    intro:
+      "The blend is built to do the simple things exceptionally well — the way a good hair oil should.",
+    points: [
+      {
+        title: "Stronger, healthier-looking hair",
+        body: "A daily botanical oil that helps hair look and feel fuller, softer and less brittle.",
+      },
+      {
+        title: "Shine without the grease",
+        body: "Absorbs quickly, so hair stays light and soft instead of slick.",
+      },
+      {
+        title: "A calmer, happier scalp",
+        body: "Spray directly at the roots and massage in — the mist reaches the scalp instead of pooling in your hands.",
+      },
+      {
+        title: "Made for every hair type",
+        body: "Straight, wavy, curly or coily. One bottle suits them all.",
+      },
+    ],
+    note: "For all hair types · 100 ml pure hair care",
+  },
+  ingredients: {
+    eyebrow: "Inside the bottle",
+    title: "Botanical, by design",
+    intro:
+      "Hibiscus, coconut, rosemary and almond — the botanicals arranged around the bottle on our label — are the heart of the blend.",
+    points: [
+      {
+        title: "Nothing hidden",
+        body: "100% natural. No parabens, no silicones, and never tested on animals.",
+      },
+      {
+        title: "Cold, light, fast-absorbing",
+        body: "A fine mist of pure hair care that reaches the scalp and spreads evenly through the strand.",
+      },
+    ],
+    note: "The full ingredient list is printed on every bottle.",
+  },
+};
+
+/* "Order Now" is the gold button at the foot of the panel rather than a list
+   row, so the conversion path is always the loudest thing on screen. */
+const MENU_NAV: { label: string; action: "home" | PanelKey }[] = [
+  { label: "Home", action: "home" },
+  { label: "About", action: "about" },
+  { label: "Benefits", action: "benefits" },
+  { label: "Ingredients", action: "ingredients" },
+];
+
+export default function Hero() {
+  const [mounted, setMounted] = useState<OverlayKey | null>(null);
+  const [entered, setEntered] = useState(false);
+  const closeTimer = useRef<number | null>(null);
+  const closeButton = useRef<HTMLButtonElement | null>(null);
+
+  const clearCloseTimer = () => {
+    if (closeTimer.current !== null) {
+      window.clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  };
+
+  const openOverlay = useCallback((key: OverlayKey) => {
+    clearCloseTimer();
+    setMounted(key);
+    if (mounted === null) {
+      setEntered(false);
+      // Two frames: let the closed state paint before transitioning in.
+      requestAnimationFrame(() => requestAnimationFrame(() => setEntered(true)));
+    }
+  }, [mounted]);
+
+  const closeOverlay = useCallback(() => {
+    clearCloseTimer();
+    setEntered(false);
+    closeTimer.current = window.setTimeout(() => setMounted(null), 340);
+  }, []);
+
+  useEffect(() => () => clearCloseTimer(), []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const focusTimer = window.setTimeout(() => closeButton.current?.focus(), 80);
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeOverlay();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener("keydown", onKeyDown);
+      previouslyFocused?.focus?.();
+    };
+  }, [mounted, closeOverlay]);
+
+  const panel = mounted && mounted !== "menu" ? PANELS[mounted] : null;
+
   return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={className}
-    >
-      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
-      <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+    <main className="hero-root flex h-svh w-full items-center justify-center overflow-hidden">
+      <div className="hero-backdrop" aria-hidden="true" />
+      <div className="hero-glow" aria-hidden="true" />
+      <div className="hero-scrim" aria-hidden="true" />
+
+      <div className="hero-poster">
+        <Image
+          src="/hero-1600.webp"
+          alt="Ismot Hair Oil — a 100 ml bottle of golden herbal hair oil on a stone plinth, surrounded by hibiscus, rosemary and almond, beneath a large Ismot wordmark, with labels reading 100% natural ingredients and 100 ml pure hair care."
+          fill
+          priority
+          sizes="(max-width: 900px) 100vw, 50vw"
+          className="hero-art"
+        />
+
+        {/* Real controls, placed exactly over the painted ones. */}
+        <Link
+          href="/order"
+          className="hero-hit hero-hit--pill"
+          style={boxStyle(HOTSPOTS.order)}
+          aria-label="Order Ismot Hair Oil now"
+        />
+
+        <Link
+          href="/order"
+          className="hero-hit"
+          style={boxStyle(HOTSPOTS.bag)}
+          aria-label="Shopping bag — order Ismot Hair Oil"
+        >
+          <span className="sr-only">Shopping bag</span>
+        </Link>
+
+        <button
+          type="button"
+          className="hero-hit"
+          style={boxStyle(HOTSPOTS.menu)}
+          onClick={() => openOverlay("menu")}
+          aria-label="Open menu"
+          aria-expanded={mounted !== null}
+          aria-haspopup="dialog"
+        />
+
+        <Link
+          href="/"
+          className="hero-hit"
+          style={boxStyle(HOTSPOTS.logo)}
+          aria-label="Ismot Hair Oil — home"
+        />
+
+        <button
+          type="button"
+          className="hero-hit"
+          style={boxStyle(HOTSPOTS.about)}
+          onClick={() => openOverlay("about")}
+          aria-haspopup="dialog"
+        >
+          <span className="sr-only">About Ismot</span>
+        </button>
+
+        <button
+          type="button"
+          className="hero-hit"
+          style={boxStyle(HOTSPOTS.benefits)}
+          onClick={() => openOverlay("benefits")}
+          aria-haspopup="dialog"
+        >
+          <span className="sr-only">Benefits</span>
+        </button>
+
+        <button
+          type="button"
+          className="hero-hit"
+          style={boxStyle(HOTSPOTS.ingredients)}
+          onClick={() => openOverlay("ingredients")}
+          aria-haspopup="dialog"
+        >
+          <span className="sr-only">Ingredients</span>
+        </button>
+      </div>
+
+      {mounted && (
+        <div className="overlay" data-open={entered} role="dialog" aria-modal="true">
+          <button
+            type="button"
+            className="overlay__backdrop"
+            onClick={closeOverlay}
+            tabIndex={-1}
+            aria-label="Close"
+          />
+
+          {mounted === "menu" ? (
+            <div className="side-panel" role="document">
+              <div className="flex items-center justify-between border-b border-gold/20 px-6 py-5">
+                <Wordmark />
+                <button
+                  ref={closeButton}
+                  type="button"
+                  onClick={closeOverlay}
+                  className="flex size-11 items-center justify-center rounded-full border border-gold/40 text-gold-soft transition-colors hover:bg-gold/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-soft"
+                  aria-label="Close menu"
+                >
+                  <CloseIcon />
+                </button>
+              </div>
+
+              <nav aria-label="Menu" className="flex flex-1 flex-col justify-center px-6 py-8">
+                <ul className="space-y-1">
+                  {MENU_NAV.map((item, index) => {
+                    // Bind first: a property narrowed through a closure is not
+                    // narrowed for TypeScript (or for the reader).
+                    const action = item.action;
+                    return (
+                      <li key={item.label}>
+                        {action === "home" ? (
+                          <Link
+                            href="/"
+                            onClick={closeOverlay}
+                            className="group flex items-baseline gap-4 rounded-2xl px-3 py-3.5 transition-colors hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-soft"
+                          >
+                            <span className="text-[11px] font-semibold tabular-nums tracking-[0.2em] text-gold/60">
+                              0{index + 1}
+                            </span>
+                            <span className="overlay-title text-3xl text-cream transition-colors group-hover:text-gold-soft">
+                              {item.label}
+                            </span>
+                          </Link>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => openOverlay(action)}
+                            className="group flex w-full items-baseline gap-4 rounded-2xl px-3 py-3.5 text-left transition-colors hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-soft"
+                          >
+                            <span className="text-[11px] font-semibold tabular-nums tracking-[0.2em] text-gold/60">
+                              0{index + 1}
+                            </span>
+                            <span className="overlay-title text-3xl text-cream transition-colors group-hover:text-gold-soft">
+                              {item.label}
+                            </span>
+                          </button>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </nav>
+
+              <div className="border-t border-gold/20 px-6 py-6">
+                <Link
+                  href="/order"
+                  className="btn-gold w-full"
+                  onClick={closeOverlay}
+                >
+                  Order now
+                  <ArrowIcon />
+                </Link>
+                <p className="mt-4 text-center text-[11px] uppercase tracking-[0.22em] text-sage/70">
+                  100 ml · Naturally sourced
+                </p>
+              </div>
+            </div>
+          ) : (
+            panel && (
+              <div className="info-panel" role="document">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold/80">
+                      {panel.eyebrow}
+                    </p>
+                    <h2
+                      id="overlay-title"
+                      className="overlay-title mt-3 text-[clamp(1.75rem,5vw,2.35rem)] text-cream"
+                    >
+                      {panel.title}
+                    </h2>
+                  </div>
+                  <button
+                    ref={closeButton}
+                    type="button"
+                    onClick={closeOverlay}
+                    className="-mr-1 -mt-1 flex size-10 shrink-0 items-center justify-center rounded-full border border-gold/35 text-gold-soft transition-colors hover:bg-gold/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-soft"
+                    aria-label="Close"
+                  >
+                    <CloseIcon />
+                  </button>
+                </div>
+
+                <p className="mt-4 text-[15px] leading-relaxed text-cream/80">{panel.intro}</p>
+
+                {panel.points && (
+                  <ul className="mt-6 space-y-4">
+                    {panel.points.map((point) => (
+                      <li key={point.title} className="flex gap-3">
+                        <span className="mt-1.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-gold/40 text-gold">
+                          <LeafIcon />
+                        </span>
+                        <div>
+                          <h3 className="text-[13px] font-bold uppercase tracking-[0.08em] text-gold-soft">
+                            {point.title}
+                          </h3>
+                          <p className="mt-1 text-sm leading-relaxed text-cream/70">{point.body}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {panel.note && (
+                  <p className="mt-6 rounded-xl border border-gold/20 bg-gold/[0.06] px-4 py-3 text-[11px] font-semibold uppercase leading-relaxed tracking-[0.14em] text-gold-soft/90">
+                    {panel.note}
+                  </p>
+                )}
+
+                <Link href="/order" className="btn-gold mt-7 w-full" onClick={closeOverlay}>
+                  Order now
+                  <ArrowIcon />
+                </Link>
+              </div>
+            )
+          )}
+        </div>
+      )}
+    </main>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" />
     </svg>
   );
 }
 
-function DropletIcon({ className }: { className?: string }) {
+function ArrowIcon() {
   return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={className}
-    >
-      <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z" />
-    </svg>
-  );
-}
-
-function ArrowRight({ className }: { className?: string }) {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={className}
-    >
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M5 12h14" />
       <path d="m12 5 7 7-7 7" />
     </svg>
   );
 }
 
-/**
- * Hero — load sequence, four beats (the empty green stage first, like the
- * reference intro):
- *
- *   1. nothing but the light-green background
- *   2. the bottle drops in from above the fold with gravity easing, then
- *      squashes, hops a few pixels and settles
- *   3. as it touches down the copy pops out from behind the bottle — both
- *      columns on the same two beats (headline with the product photo, then
- *      the buttons with the feature rows) so neither side leads the other;
- *      the big ISMOT watermark breathes in behind everything
- *   4. the nav fades/slides down from the top once the bottle has landed
- *
- * Stacking, so the headline really slides out from behind the bottle while the
- * orb stays behind the copy (no z-index flicker mid-tween):
- *   - watermark  z-0
- *   - orb        z-auto inside the stage (the stage sets no z-index, so it does
- *                not create a stacking context)
- *   - copy       z-20
- *   - bottle     z-30 — its own non-rotated layer, so GSAP's y falls straight
- *                down (a y on the tilted image itself would be rotated 12° by
- *                the CSS `rotate` property) while the squash still runs along
- *                the bottle's own axis.
- *   - nav        z-40, above the bottle — the stage is capped (see .hero-stage)
- *                so the two should not meet, but a nav that could be covered by
- *                artwork would be the worse failure of the two.
- */
-export default function Hero() {
-  const root = useRef<HTMLElement>(null);
-  const stage = useRef<HTMLDivElement>(null);
-  const circle = useRef<HTMLImageElement>(null);
-  const bottle = useRef<HTMLDivElement>(null);
-  const cue = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      /* The bottle's own transform is owned by GSAP rather than by CSS classes.
-         GSAP rewrites the transform when it animates and folds the element's CSS
-         translate/rotate into its cache once — so any later re-parse of that
-         transform (a ScrollTrigger refresh, for instance) reads 0 and silently
-         drops the centring and the tilt. Setting them here keeps them stable,
-         and it also puts the landing squash in the bottle's own rotated space. */
-      gsap.set("[data-anim='bottle-art']", { xPercent: -50, yPercent: -50, rotation: 12 });
-
-      // Motion off: land on the finished frame and collapse the scroll runway —
-      // with no scrub to play, the extra height would just be dead scrolling.
-      // Only opacity here: the step offsets live in CSS `translate`, and a
-      // transform write would erase them.
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        gsap.set(root.current, { height: "100svh" });
-        gsap.set("[data-anim]", { opacity: 1 }); // includes the bottle layer
-        gsap.set(circle.current, { opacity: 0.55 });
-        return;
-      }
-
-      /* The copy rides a guide rail: the step offsets that make the right edges
-         step back as they descend are CSS `translate` values (Tailwind). GSAP
-         takes over the transform when it animates, so capture each resting rail
-         position once, before anything animates, and treat it as the resting x —
-         CSS stays the single source of truth and the reveal travels around it
-         instead of flattening it.
-
-         Read it through gsap.getProperty: GSAP folds the individual CSS
-         `translate`/`rotate`/`scale` properties in, whereas getComputedStyle
-         can hand back an unresolved calc(), which silently reads as 0. */
-      const rail = new Map<Element, number>();
-      const onRail = (selector: string) => {
-        const els = gsap.utils.toArray<Element>(selector);
-        for (const el of els) rail.set(el, Number(gsap.getProperty(el, "x")) || 0);
-        return els;
-      };
-      const railX = (_i: number, el: Element) => rail.get(el) ?? 0;
-
-      let cueShown = true;
-
-      /* Reveal distances are proportional to the stage, not fixed pixels: the
-         copy has to start tucked behind the bottle whatever size the stage ends
-         up at (the CSS cap shrinks it on shorter windows). At the 720px design
-         size these come out as the tuned 130 / 54 / 150 / 120px. */
-      const S = stage.current?.clientWidth || 720;
-      const REVEAL = { line: S * 0.18, cta: S * 0.075, media: S * 0.208, feature: S * 0.167 };
-
-      const lines = onRail("[data-anim='line']");
-      const ctas = onRail("[data-anim='cta']");
-      const media = onRail("[data-anim='media']");
-      const features = onRail("[data-anim='feature']");
-
-      // Hand GSAP the rail positions the same way, so the resting offset lives in
-      // its own transform and survives any re-parse instead of depending on the
-      // CSS `translate` property it is about to neutralise.
-      gsap.set([...lines, ...ctas, ...media, ...features], { x: railX });
-
-      /* Initial state, applied before first paint so nothing flashes in.
-
-         Everything waits tucked in behind the bottle — the headline and buttons
-         to the right of their slot, the right-hand column to the left of it — so
-         every part of the copy slides out from the same place. yPercent for the
-         bottle is relative to its own layer, so parking it above the fold holds
-         at any viewport size (a pixel distance measured at mount goes stale the
-         moment the stage resizes). */
-      gsap.set(bottle.current, { yPercent: -105, opacity: 0 });
-      gsap.set(lines, {
-        x: (_i, el) => railX(0, el) + REVEAL.line,
-        opacity: 0,
-        filter: "blur(5px)",
-      });
-      gsap.set(ctas, { x: (_i, el) => railX(0, el) + REVEAL.cta, opacity: 0 });
-      gsap.set(media, { x: (_i, el) => railX(0, el) - REVEAL.media, opacity: 0 });
-      gsap.set(features, { x: (_i, el) => railX(0, el) - REVEAL.feature, opacity: 0 });
-      gsap.set("[data-anim='watermark']", { opacity: 0, scale: 1.06 });
-      gsap.set("[data-anim='nav']", { y: -22, opacity: 0 });
-
-      /* The sequence is driven by scroll: the stage is held in place with CSS
-         position: sticky inside a taller section, and the visitor's scrolling
-         scrubs the timeline across that extra distance — down plays it, up
-         rewinds it. Sticky rather than ScrollTrigger's own pin on purpose: the
-         app shell's flex body collapses a pin-spacer back to one viewport tall,
-         which leaves nothing to scroll. scrub's catch-up tween smooths out the
-         wheel rather than snapping to it. */
-      const tl = gsap.timeline({
-        defaults: { ease: "power3.out" },
-        scrollTrigger: {
-          trigger: root.current,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 0.6,
-          onUpdate: (self) => {
-            const wantCue = self.progress <= 0.01;
-            if (wantCue !== cueShown) {
-              cueShown = wantCue;
-              gsap.to(cue.current, { opacity: wantCue ? 1 : 0, duration: 0.35, overwrite: true });
-            }
-          },
-        },
-      });
-
-      // The first frame is deliberately empty, so invite the scroll that plays it.
-      gsap.to(cue.current, { opacity: 1, duration: 0.8, delay: 0.5, ease: "power2.out" });
-
-      tl
-        /* ——— 2. the drop: gravity down, then a soft landing with one settle ——— */
-        .set(bottle.current, { opacity: 1 }, 0)
-        .to(bottle.current, { yPercent: 0, duration: 1, ease: "power2.in" }, 0)
-        // impact squashes along the bottle's own axis, then breathes back out
-        .to("[data-anim='bottle-art']", { scaleY: 0.94, duration: 0.12, ease: "power2.out" }, 1)
-        .to(bottle.current, { yPercent: -1.4, duration: 0.42, ease: "power2.out" }, 1)
-        .to(
-          "[data-anim='bottle-art']",
-          { scaleY: 1, duration: 1.05, ease: "elastic.out(1, 0.45)" },
-          1.12,
-        )
-        .to(bottle.current, { yPercent: 0, duration: 0.75, ease: "sine.inOut" }, 1.35)
-
-        // the orb blooms out behind the falling bottle
-        .fromTo(
-          circle.current,
-          { scale: 2.2, opacity: 0 },
-          { scale: 1, opacity: 0.55, duration: 2, ease: "power3.out" },
-          0.1,
-        )
-
-        /* ——— 3. copy slides out from behind the bottle ——— */
-        /* Both columns share the same two beats, so neither side appears ahead
-           of the other: the headline lands with the product photo, and the
-           buttons land with the feature rows. Each side still emerges from
-           behind the bottle — it just does so in step. Within a side the order
-           is still top-down, so the cascade reads as intended. */
-        // beat 1 — headline (left) together with the product photo (right)
-        .to(lines, { x: railX, opacity: 1, duration: 0.9, stagger: 0.09 }, 1)
-        // blur clears faster than the fade so the text sharpens as it arrives
-        .to(lines, { filter: "blur(0px)", duration: 0.5, stagger: 0.09, ease: "power2.out" }, 1)
-        .to(media, { x: railX, opacity: 1, duration: 0.9 }, 1)
-        // beat 2 — buttons (left) together with the feature rows (right)
-        .to(ctas, { x: railX, opacity: 1, duration: 0.8, stagger: 0.1 }, 1.9)
-        .to(features, { x: railX, opacity: 1, duration: 0.8, stagger: 0.1 }, 1.9)
-
-        // ISMOT watermark breathes in softly behind everything
-        .to(
-          "[data-anim='watermark']",
-          { opacity: 1, scale: 1, duration: 1.8, ease: "power2.out" },
-          1.15,
-        )
-
-        /* ——— 4. nav only once the bottle has landed ——— */
-        .to("[data-anim='nav']", { y: 0, opacity: 1, duration: 0.9 }, 1.4);
-
-      // Handy while designing: window.heroTl.seek(1.3) / .pause() in the console.
-      if (process.env.NODE_ENV !== "production") {
-        (window as Window & { heroTl?: unknown }).heroTl = tl;
-        (window as Window & { heroST?: unknown }).heroST = tl.scrollTrigger;
-      }
-    },
-    { scope: root },
-  );
-
+function LeafIcon() {
   return (
-    // The extra height is the scroll runway the sequence is scrubbed across;
-    // the stage itself sticks to the top of it. flex-none so the app shell's
-    // flex column cannot squeeze the runway away.
-    <section ref={root} className="hero relative h-[250svh] w-full flex-none">
-      <div className="hero-scene sticky top-0 h-svh w-full overflow-hidden bg-[url('/hero-bg.jpg')] bg-cover bg-center bg-no-repeat">
-        {/* Header nav — same layout as the reference: links left, logo center, links right */}
-        <header
-          data-anim="nav"
-          className="absolute inset-x-0 top-0 z-40 flex justify-center pt-7 opacity-0"
-        >
-          <nav aria-label="Primary" className="flex items-center gap-10">
-            <a
-              href="#home"
-              className="text-[13px] font-semibold uppercase tracking-[0.18em] text-[#3a5a2a] transition-colors hover:text-[#1e3512]"
-            >
-              Home
-            </a>
-            <a
-              href="#about"
-              className="text-[13px] font-semibold uppercase tracking-[0.18em] text-[#3a5a2a] transition-colors hover:text-[#1e3512]"
-            >
-              About Us
-            </a>
-            <a
-              href="#home"
-              aria-label="Ismot — home"
-              className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900 text-[9px] font-bold uppercase tracking-[0.2em] text-white"
-            >
-              Ismot
-            </a>
-            <a
-              href="#products"
-              className="flex items-center gap-1.5 text-[13px] font-semibold uppercase tracking-[0.18em] text-[#3a5a2a] transition-colors hover:text-[#1e3512]"
-            >
-              Products
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </a>
-            <a
-              href="#contact"
-              className="text-[13px] font-semibold uppercase tracking-[0.18em] text-[#3a5a2a] transition-colors hover:text-[#1e3512]"
-            >
-              Contact
-            </a>
-          </nav>
-        </header>
-
-        {/* Hero copy — left side, real text (not images) so GSAP can animate it.
-            Hangs on the guide line: right edges ride the diagonal, stepping left
-            as they descend (~0.29 x per y, matching the bottle's tilt). */}
-        <div className="absolute left-5 top-[var(--band-top)] z-20 w-[min(48%,470px)] sm:left-11">
-          <h1 className="text-right text-[clamp(1.45rem,3.3vw,2.85rem)] font-black uppercase leading-[0.95] tracking-tight text-[#243d14]">
-            <span data-anim="line" className="block opacity-0">
-              Natural Care
-            </span>
-            <span data-anim="line" className="block -translate-x-3 opacity-0">
-              for Healthier
-            </span>
-            <span data-anim="line" className="block -translate-x-6 opacity-0">
-              Shinier Hair
-            </span>
-          </h1>
-          {/* offsets belong to the SLOT (top/bottom) so the rail stays on the guide line */}
-          <div className="mt-7 flex flex-col items-end gap-4">
-            <a
-              data-anim="cta"
-              href="#benefits"
-              className="group -translate-x-11 inline-flex items-center gap-3 rounded-full border-2 border-[#3e6427] px-6 py-3 text-[13px] font-bold uppercase tracking-[0.15em] text-[#3e6427] opacity-0 transition-colors hover:bg-[#3e6427] hover:text-white"
-            >
-              View Benefits
-              <ArrowRight className="transition-transform group-hover:translate-x-1" />
-            </a>
-            <a
-              data-anim="cta"
-              href="#shop"
-              className="group -translate-x-[62px] inline-flex items-center gap-3 rounded-full bg-[#3e6427] px-6 py-3 text-[13px] font-bold uppercase tracking-[0.15em] text-white opacity-0 transition-colors hover:bg-[#32511e]"
-            >
-              Shop Now
-              <ArrowRight className="transition-transform group-hover:translate-x-1" />
-            </a>
-          </div>
-        </div>
-
-        {/* Right column — product photo + features grouped in ONE wrapper so
-            later animations can move them as a single unit */}
-        <div className="absolute right-8 top-[var(--band-top)] z-20 w-[min(40%,420px)] sm:right-14">
-          <img
-            data-anim="media"
-            src="/product-hd.webp"
-            alt="ISMOT Herbal Oil — spray bottle and carton with natural herbs"
-            className="mb-1 w-[min(52%,200px)] opacity-0"
-          />
-          <div className="space-y-4">
-            <div data-anim="feature" className="flex -translate-x-4 items-start gap-3.5 opacity-0">
-              <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-[#4a7031] text-[#4a7031]">
-                <LeafIcon />
-              </span>
-              <div>
-                <h3 className="text-[15px] font-black uppercase leading-snug tracking-tight text-[#243d14]">
-                  100% Natural Ingredients
-                </h3>
-                <p className="mt-1 text-[11px] font-semibold uppercase leading-relaxed tracking-[0.05em] text-[#57734a]">
-                  Pure herbs. No harmful chemicals.
-                  <br />
-                  Just the goodness of nature.
-                </p>
-              </div>
-            </div>
-
-            <div data-anim="feature" className="-translate-x-8 border-t border-[#3e6427]/20 opacity-0" />
-
-            <div data-anim="feature" className="flex -translate-x-8 items-start gap-3.5 opacity-0">
-              <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-[#4a7031] text-[#4a7031]">
-                <DropletIcon />
-              </span>
-              <div>
-                <h3 className="text-[15px] font-black uppercase leading-snug tracking-tight text-[#243d14]">
-                  100 ml Pure Hair Care
-                </h3>
-                <p className="mt-1 text-[11px] font-semibold uppercase leading-relaxed tracking-[0.05em] text-[#57734a]">
-                  Nourishes, strengthens and
-                  <br />
-                  brings natural shine.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Giant watermark behind the circle, like the reference video */}
-        <span
-          data-anim="watermark"
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0 flex select-none flex-col items-center justify-center whitespace-nowrap text-[19vw] font-black uppercase leading-[0.9] text-white/20 opacity-0"
-        >
-          <span>Ismot</span>
-          <span>Ismot</span>
-        </span>
-
-        {/* Scroll cue — the first frame is empty by design, so point the way.
-            Hidden for reduced-motion (there is no scrub to invite), and it leaves
-            the moment the scrub starts. */}
-        <div
-          ref={cue}
-          aria-hidden="true"
-          className="pointer-events-none absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-2 opacity-0"
-        >
-          <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#3a5a2a]">
-            Scroll
-          </span>
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-[#3a5a2a]"
-          >
-            <path d="M12 5v14" />
-            <path d="m6 13 6 6 6-6" />
-          </svg>
-        </div>
-
-        {/* Orb + bottle. The stage deliberately has no z-index: without a stacking
-            context the bottle can sit on its own layer (z-30) above the copy,
-            while the orb stays behind it — so the headline slides out from behind
-            the bottle instead of from behind the orb. */}
-        <div ref={stage} className="hero-stage aspect-square">
-          <img
-            ref={circle}
-            src="/circle-white.webp"
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 h-full w-full select-none opacity-0"
-          />
-          <div ref={bottle} data-anim="bottle" className="pointer-events-none absolute inset-0 z-30 opacity-0">
-            <img
-              data-anim="bottle-art"
-              src="/bottle.webp"
-              alt="ISMOT Hair Oil bottle"
-              className="absolute left-1/2 top-[40%] h-[86%] w-auto select-none"
-            />
-          </div>
-        </div>
-      </div>
-    </section>
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+      <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+    </svg>
   );
 }

@@ -6,11 +6,13 @@ it*. Read both before making changes.
 ## 1. Where the code is
 
 **All application code lives in `ismot-next/`.** That is the Next.js 16 app
-(App Router, TypeScript, Tailwind v4, GSAP).
+(App Router, TypeScript, Tailwind v4).
 
 The root-level `index.html`, `app.js`, `styles.css`, `assets/` and `vendor/`
 are the **previous, pre-framework version** of the site, kept for reference
-only. Do not extend them and do not wire them into the Next app.
+only. Do not extend them and do not wire them into the Next app. (One thing is
+still useful about them: `assets/layers.js` holds the artwork's layer manifest,
+which is where the hero hotspot percentages come from.)
 
 `vera/`, `vera_assets_zip/`, `video_frames/` and `tools/` are **reference
 inputs** — design history and measurement scripts. Nothing in `ismot-next/`
@@ -28,56 +30,63 @@ npm run lint         # ESLint
 npm run build        # production build
 ```
 
-`npm run lint` currently reports **3 `@next/next/no-img-element` warnings**.
-Those are intentional — the hero artwork must stay plain `<img>` elements so
-GSAP can transform them. Do not "fix" them into `next/image`.
+`npm run lint` and `npx tsc --noEmit` are expected to be clean. Do not silence a
+warning just to make them pass.
 
-## 3. Hard constraints on the hero
+## 3. Hard constraints on the homepage
 
-- **The headline and body copy must remain real HTML text.** Never rasterise
-  copy into an image — GSAP animates it and it must stay selectable and
-  accessible.
-- **Do only what was asked.** This hero is tuned to a specific approved
-  composition. Prefer the smallest change that achieves the request over a
-  refactor.
-- **Measure, do not eyeball.** Background-tab `requestAnimationFrame` and timers
-  are throttled, so screenshots lie. Verify layout by reading the live DOM
-  (`getBoundingClientRect`, `gsap.getProperty`) — the dev-only handles
-  `window.heroTl` / `window.heroST` are there for that.
-- The design size the composition is tuned to is **1280 × 960**. Any change
-  must leave that size byte-for-byte identical.
+- **The homepage is the artwork and nothing else.** No section below the hero,
+  no footer, no testimonials, product grid or blank spacer. The document must be
+  exactly one viewport tall (`h-svh`, `overflow-hidden`) and must not scroll.
+- **Every painted control keeps a real control on top of it.** The boxes in
+  `HOTSPOTS` (`app/hero.tsx`) are percentages of the poster and only line up
+  because `.hero-poster` has the artwork's exact aspect ratio. If the artwork or
+  a control moves, re-measure — do not nudge pixels until it "looks right".
+- The bag and menu hit boxes meet at 92.75 %; they must never overlap, or the
+  wrong control receives the tap.
+- **Show the whole artwork.** Sizing is "contain" (`min(100svh, 100vw * 3264 /
+  2477)`); never crop the bottle, the CTA or the labels on mobile to fill the
+  screen. The blurred backdrop fills the rest.
+- Info panels are overlays over the hero, not new page sections.
 
-## 4. Two GSAP gotchas that must not regress
+## 4. Hard constraints on ordering
 
-Both are documented in full in `README.md` and at the point of use in
-`hero.tsx`. The short version:
+- The form collects **only** full name, mobile number and delivery address.
+  Never add payment fields, delivery charges, shipping options, courier
+  selection or extra personal data.
+- **Never invent a price.** Price comes from `PRODUCT_PRICE_BDT` and every price
+  row is hidden when it is unset.
+- Orders go through `POST /api/orders` only. Keep validation shared via
+  `lib/validation.ts`, keep the same-origin / rate-limit / honeypot /
+  idempotency checks, and never show the confirmation screen unless the backend
+  actually returned an `orderRef`.
+- Never expose `SUPABASE_SERVICE_ROLE_KEY` (or any secret) to the client. Customer
+  data is admin-only: `/admin` requires `ADMIN_PASSWORD` and the export route
+  checks the session.
+- `.data/` holds real customer rows in development. It is git-ignored — keep it
+  that way, and never commit an order database or an export.
 
-1. GSAP folds CSS `translate`/`rotate`/`scale` into its own `transform` on
-   first write. The copy's "guide rail" is made of CSS step offsets, so read
-   resting positions with `gsap.getProperty(el, "x")` and animate to those
-   function-based values — never `getComputedStyle(el).translate`, which
-   returns an unresolved `calc()` that parses as `0`.
-2. The bottle's transform belongs to GSAP (`gsap.set(..., { xPercent: -50,
-   yPercent: -50, rotation: 12 })`), not to Tailwind classes, and
-   `invalidateOnRefresh` must stay **off** the scrollTrigger — on refresh it
-   re-parses the transform as zero and drops the centring and the tilt.
+## 5. Order statuses
 
-## 5. Style and conventions
+`Pending`, `Confirmed`, `Processing`, `Delivered`, `Cancelled` — defined once in
+`lib/orders.ts` and enforced in the database. Don't add statuses in the UI only.
+
+## 6. Style and conventions
 
 - Match the surrounding code. There is **no Prettier** configured (only ESLint),
   so re-indent by hand when restructuring JSX.
 - Tailwind v4 is configured **in CSS** (`app/globals.css`). There is no
-  `tailwind.config.js`; do not create one.
-- Import GSAP only through `app/gsap.ts`, which registers ScrollTrigger and
-  `useGSAP` once.
-- Layout and cosmetic constants are deliberately centralised in the
-  `.hero-scene` / `.hero-stage` rules and in `hero.tsx`. Put new constants
-  there rather than sprinkling magic numbers through components.
-- Tailwind v4 emits `rotate` and `translate` as **separate CSS properties**,
-  not as `transform`. Read them with `getComputedStyle(el).rotate` /
-  `.translate` — but see gotcha 1 before you write to them.
+  `tailwind.config.js`; do not create one. Brand colours live in `@theme` as
+  `forest`, `moss`, `gold`, `gold-soft`, `cream`, `sage`.
+- Layout and cosmetic constants are deliberately centralised in the component
+  CSS blocks (`.hero-*`, `.overlay*`, `.field`, `.btn-*`) and in `hero.tsx`.
+  Put new constants there rather than sprinkling magic numbers through
+  components.
+- `app/gsap.ts` and the GSAP dependencies are leftovers from the previous
+  scroll-driven hero and are unused. Don't build new work on them without a
+  reason.
 
-## 6. Committing — the repo auto-pushes
+## 7. Committing — the repo auto-pushes
 
 This repository is mirrored to <https://github.com/sifaaaaaaaat/ismot> and is
 set up to stay in sync automatically:
@@ -96,19 +105,16 @@ Guidelines:
 
 - Commit only files you changed. Never `git add -A` across someone else's
   in-progress work.
-- Never commit or push without explicit user intent to do so *only* if the user
-  has asked you to stop — otherwise the standing instruction is to keep the repo
-  in sync.
 - Keep build output out of the history: `.gitignore` covers `node_modules/`,
-  `.next/`, `*.log`, `*.tsbuildinfo`, `.env*` and `.freebuff/`. Do not bypass it.
+  `.next/`, `*.log`, `*.tsbuildinfo`, `.env*`, `.data/` and `.freebuff/`. Do not
+  bypass it.
 - Write commit messages that state **why**, in the imperative mood.
 
-## 7. Known gaps
+## 8. Known gaps
 
-- **Hero below ~1100 px width** — the two copy columns collide with the bottle.
-  No stage size resolves it; that range needs a stacked layout.
-- **Very wide windows** — copy is anchored 44 px from the left edge while the
-  bottle is centred, so the "emerges from behind the bottle" illusion weakens
-  (≈380 px gap at 1900 px wide).
-- Only the hero exists. Nav links, buttons and the rest of the page are
-  currently non-functional markup.
+- Ingredient and benefit copy in the hero panels is written from the label's
+  claims — have the brand confirm the exact formulation before launch.
+- There is no Microsoft/OneDrive workbook integration; `/admin` + the `.xlsx`
+  export is the order-management path.
+- No password reset, no email/SMS notification, and no per-customer order
+  lookup — orders are confirmed by phone as the confirmation screen says.
