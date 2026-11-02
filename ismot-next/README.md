@@ -47,42 +47,42 @@ Other scripts, from `ismot-next/`:
 
 ## Homepage: the poster hero
 
-`app/hero.tsx` renders `public/hero-poster.webp` — the 941 × 1671 promotional
-artwork — at its own aspect ratio, and lays **real buttons over the controls
-that are painted into it**:
+`app/hero.tsx` renders `public/hero-poster.webp` at its own aspect ratio, and
+lays **real buttons over the controls that are painted into it**:
 
 | painted control          | element            | action                    |
 | ------------------------ | ------------------ | ------------------------- |
 | Order Now pill           | `<Link>`           | `/order`                  |
 | shopping-bag icon        | `<Link>`           | `/order`                  |
 | hamburger icon           | `<button>`         | menu panel                |
-| About / Benefits / Ingredients labels | `<button>` | info panels          |
 | logo                     | `<Link>`           | `/`                       |
 
-Each control is a percentage box of the poster (`HOTSPOTS` in `hero.tsx`,
-measured from `assets/layers.js`, the artwork's own layer manifest):
+Each control is a percentage box of the painted poster (`HOTSPOTS` in
+`hero.tsx`, measured from the artwork with `tools/measure_hero.py`):
 
 | control     | left  | top   | width | height |
 | ----------- | ----- | ----- | ----- | ------ |
-| order       | 37.00 | 91.20 | 30.80 | 8.80   |
-| bag         | 85.60 | 0     | 7.15  | 8.00   |
-| menu        | 92.75 | 0     | 6.90  | 8.00   |
-| logo        | 0.40  | 0     | 14.90 | 8.00   |
-| about       | 23.60 | 0     | 12.40 | 8.00   |
-| benefits    | 40.10 | 0     | 14.90 | 8.00   |
-| ingredients | 58.20 | 0     | 18.60 | 8.00   |
+| order       | 26.20 | 88.60 | 46.40 | 7.90   |
+| bag         | 75.80 | 1.40  | 8.20  | 6.20   |
+| menu        | 84.40 | 1.40  | 10.00 | 6.20   |
+| logo        | 3.40  | 0.40  | 26.60 | 9.20   |
+
+This artwork paints no About / Benefits / Ingredients labels, so those panels
+are reached from the menu panel instead.
 
 **If you change the artwork, re-measure these.** They only stay aligned because
-`.hero-poster` (in `globals.css`) is exactly the image's aspect ratio and the
-image fills it — the percentages then resolve against the same box the artwork
-is drawn into at every viewport size. The bag and menu boxes deliberately meet
-at 92.75 % rather than overlapping.
+`.hero-content` (in `globals.css`) is exactly the painted poster's rectangle and
+the image fills it — the percentages then resolve against the same box the
+artwork is drawn into at every viewport size. The bag and menu boxes sit just
+apart, never overlapping.
 
-The poster is shown **whole**: `height: min(100svh, 100vw * 1671 / 941)`, so it
-fills the width on phones and the height on desktop, never cropping the bottle
-or the CTA. The remaining space is filled by a blurred, darkened copy of the
-same artwork (`.hero-backdrop`) plus a warm glow and vignette, so the bands read
-as part of the lit scene.
+The file is 941 × 2196: the painted 9:16 poster with 262 px of blurred scene
+above and below, produced by `tools/build_hero_poster.py`. On phones the whole
+file covers the screen (`height: 100vw * 2196 / 941`, the surplus clipped evenly
+by the `h-svh`, `overflow-hidden` root), so a tall phone shows picture instead
+of empty bands while the poster keeps its size. On wider screens that added
+scene is cropped away and the poster is framed at 9:16
+(`min(100svh, 100vw * 1671 / 941)`), rounded, with a soft shadow.
 
 The homepage is `h-svh`, `overflow-hidden`, with no section after it — the
 document has exactly one viewport of height and nothing scrolls.

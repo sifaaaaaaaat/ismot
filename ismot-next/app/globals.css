@@ -98,23 +98,49 @@ body {
     radial-gradient(60% 34% at 50% 100%, rgba(198, 148, 74, 0.14), transparent 72%);
 }
 
+/* The artwork file is 941x2196: the 9:16 poster with 262px of scene added above
+   and below, mirrored from its own edges. Phones are taller than 9:16, so
+   without that scene the whole poster always left a band at each end.
+
+   On phones the file is laid over the whole screen and is deliberately taller
+   than the viewport; .hero-root clips the surplus evenly, which leaves the
+   painted poster at exactly the size and place it had while the bands become
+   picture instead of empty space. */
 .hero-poster {
   position: relative;
-  height: 100vh; /* fallback for browsers without svh */
-  height: min(100svh, calc(100vw * 1671 / 941));
-  aspect-ratio: 941 / 1671;
-  margin-inline: auto;
+  width: 100vw;
+  height: calc(100vw * 2196 / 941);
   overflow: hidden;
 }
 
-/* Once the viewport is wider than the artwork it no longer touches the edges,
-   so it can be finished like a framed print instead of a cropped photo. */
-@media (min-aspect-ratio: 3 / 4) {
+/* The painted poster inside that file. Every hotspot is a percentage of this
+   box, so the real buttons land on the painted controls. */
+.hero-content {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: 11.93%;
+  height: 76.09%;
+}
+
+/* Wider screens show the poster whole, finished like a framed print: the added
+   scene is cropped away by object-fit, so this box is exactly the 9:16 poster. */
+@media (min-aspect-ratio: 9 / 16) {
   .hero-poster {
+    width: auto;
+    height: 100vh; /* fallback for browsers without svh */
+    height: min(100svh, calc(100vw * 1671 / 941));
+    aspect-ratio: 941 / 1671;
+    margin-inline: auto;
     border-radius: 18px;
     box-shadow:
       0 34px 90px rgba(0, 0, 0, 0.62),
       0 0 0 1px rgba(216, 184, 119, 0.16);
+  }
+
+  .hero-content {
+    top: 0;
+    height: 100%;
   }
 }
 

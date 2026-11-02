@@ -185,39 +185,43 @@ export default function Hero() {
           className="hero-art"
         />
 
-        {/* Real controls, placed exactly over the painted ones. */}
-        <Link
-          href="/order"
-          className="hero-hit hero-hit--pill"
-          style={boxStyle(HOTSPOTS.order)}
-          aria-label="Order Ismot Hair Oil now"
-        />
+        {/* Real controls, placed exactly over the painted ones. They live in
+            .hero-content — the painted poster — rather than in the poster
+            element, because the artwork now carries scene above and below it. */}
+        <div className="hero-content">
+          <Link
+            href="/order"
+            className="hero-hit hero-hit--pill"
+            style={boxStyle(HOTSPOTS.order)}
+            aria-label="Order Ismot Hair Oil now"
+          />
 
-        <Link
-          href="/order"
-          className="hero-hit"
-          style={boxStyle(HOTSPOTS.bag)}
-          aria-label="Shopping bag — order Ismot Hair Oil"
-        >
-          <span className="sr-only">Shopping bag</span>
-        </Link>
+          <Link
+            href="/order"
+            className="hero-hit"
+            style={boxStyle(HOTSPOTS.bag)}
+            aria-label="Shopping bag — order Ismot Hair Oil"
+          >
+            <span className="sr-only">Shopping bag</span>
+          </Link>
 
-        <button
-          type="button"
-          className="hero-hit"
-          style={boxStyle(HOTSPOTS.menu)}
-          onClick={() => openOverlay("menu")}
-          aria-label="Open menu"
-          aria-expanded={mounted !== null}
-          aria-haspopup="dialog"
-        />
+          <button
+            type="button"
+            className="hero-hit"
+            style={boxStyle(HOTSPOTS.menu)}
+            onClick={() => openOverlay("menu")}
+            aria-label="Open menu"
+            aria-expanded={mounted !== null}
+            aria-haspopup="dialog"
+          />
 
-        <Link
-          href="/"
-          className="hero-hit"
-          style={boxStyle(HOTSPOTS.logo)}
-          aria-label="Ismot Hair Oil — home"
-        />
+          <Link
+            href="/"
+            className="hero-hit"
+            style={boxStyle(HOTSPOTS.logo)}
+            aria-label="Ismot Hair Oil — home"
+          />
+        </div>
 
       </div>
 
