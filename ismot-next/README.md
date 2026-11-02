@@ -47,7 +47,7 @@ Other scripts, from `ismot-next/`:
 
 ## Homepage: the poster hero
 
-`app/hero.tsx` renders `public/hero-2x3.webp` at its own aspect ratio, and
+`app/hero.tsx` renders `public/hero-phone.webp` at its own aspect ratio, and
 lays **real buttons over the controls that are painted into it**:
 
 | painted control          | element            | action                    |
@@ -62,10 +62,10 @@ Each control is a percentage box of the painted poster (`HOTSPOTS` in
 
 | control     | left  | top   | width | height |
 | ----------- | ----- | ----- | ----- | ------ |
-| order       | 30.15 | 84.27 | 40.00 | 9.00   |
-| bag         | 75.15 | 2.79  | 8.00  | 6.00   |
-| menu        | 84.17 | 2.86  | 9.00  | 6.00   |
-| logo        | 7.07  | 0.71  | 22.00 | 9.00   |
+| order       | 24.50 | 81.80 | 51.00 | 7.40   |
+| bag         | 75.10 | 6.78  | 7.00  | 5.00   |
+| menu        | 86.26 | 6.86  | 7.50  | 5.00   |
+| logo        | 2.97  | 5.74  | 32.94 | 7.50   |
 
 This artwork paints no About / Benefits / Ingredients labels, so those panels
 are reached from the menu panel instead.
@@ -76,14 +76,12 @@ the image fills it — the percentages then resolve against the same box the
 artwork is drawn into at every viewport size. The bag and menu boxes sit just
 apart, never overlapping.
 
-The file is 1024 × 2389: the painted 2:3 poster with 426 px of blurred scene
-above and below, produced by `tools/build_hero_poster.py` from
-`assets/ismot-hero-2x3.png`. On phones the whole file covers the screen
-(`height: 100vw * 2389 / 1024`, the surplus clipped evenly by the `h-svh`,
-`overflow-hidden` root), so a tall phone shows picture instead of empty bands
-while the poster keeps its size. On wider screens that added scene is cropped
-away and the poster is framed at 2:3 (`min(100svh, 100vw * 1536 / 1024)`),
-rounded, with a soft shadow.
+The file is 841 × 1870 — phone-shaped, about 9:20 — so nothing is added to it.
+On a phone the poster box keeps that exact ratio and is grown until it covers the
+screen (`width: max(100vw, 100svh * 841 / 1870)`), the `h-svh`, `overflow-hidden`
+root centring it and clipping the few surplus pixels. From about 1:2 upward the
+screen is wider than the artwork, so it is shown whole — framed, rounded, with a
+soft shadow — and a blurred copy of itself fills the sides.
 
 The homepage is `h-svh`, `overflow-hidden`, with no section after it — the
 document has exactly one viewport of height and nothing scrolls.
@@ -217,7 +215,7 @@ ismot-next/
 │   ├── orders.ts           → storage (Supabase | SQLite)
 │   ├── admin-auth.ts       → password + signed session cookie
 │   └── rate-limit.ts       → fixed-window limiter
-├── public/                 → hero-2x3.webp, bottle.webp
+├── public/                 → hero-phone.webp, bottle.webp
 └── supabase/schema.sql
 ```
 

@@ -8,15 +8,15 @@ import Wordmark from "./wordmark";
 /**
  * Homepage — the promotional artwork, full screen and nothing else.
  *
- * Everything the visitor can see is painted into one 1024x1536 poster, so the
+ * Everything the visitor can see is painted into one 841x1870 poster, so the
  * hero renders that poster at its own aspect ratio and covers each painted
  * control with a real button. The boxes below are percentages of the poster,
  * measured from the artwork itself (tools/measure_hero.py), so the hit areas
  * stay on the painted pixels at every viewport size.
  *
- * The artwork is shown whole (never cropped): on phones it fills the width, on
- * desktop it fills the height, and the poster file carries a little blurred
- * scene above and below it so a tall screen is filled with picture.
+ * The artwork is phone-shaped, so a phone shows it filling the screen with
+ * nothing added to it; a wide screen shows it whole and framed, with a blurred
+ * copy of itself filling the sides.
  */
 
 type Box = { left: number; top: number; width: number; height: number };
@@ -25,10 +25,10 @@ type Box = { left: number; top: number; width: number; height: number };
    touch targets are comfortable, but never overlapping: the bag and menu icons
    sit close together, so their boxes stop short of one another. */
 const HOTSPOTS = {
-  order: { left: 30.15, top: 84.27, width: 40, height: 9 },
-  bag: { left: 75.15, top: 2.79, width: 8, height: 6 },
-  menu: { left: 84.17, top: 2.86, width: 9, height: 6 },
-  logo: { left: 7.07, top: 0.71, width: 22, height: 9 },
+  order: { left: 24.5, top: 81.8, width: 51, height: 7.4 },
+  bag: { left: 75.1, top: 6.78, width: 7, height: 5 },
+  menu: { left: 86.26, top: 6.86, width: 7.5, height: 5 },
+  logo: { left: 2.97, top: 5.74, width: 32.94, height: 7.5 },
 } satisfies Record<string, Box>;
 
 const boxStyle = (box: Box) => ({
@@ -177,7 +177,7 @@ export default function Hero() {
 
       <div className="hero-poster">
         <Image
-          src="/hero-2x3.webp"
+          src="/hero-phone.webp"
           alt="Ismot Hair Oil — a 100 ml bottle of golden herbal hair oil on a stone plinth, surrounded by hibiscus, rosemary and almond, beneath a large Ismot wordmark, with labels reading 100% natural ingredients and 100 ml pure hair care."
           fill
           priority
@@ -185,9 +185,7 @@ export default function Hero() {
           className="hero-art"
         />
 
-        {/* Real controls, placed exactly over the painted ones. They live in
-            .hero-content — the painted poster — rather than in the poster
-            element, because the artwork now carries scene above and below it. */}
+        {/* Real controls, placed exactly over the painted ones. */}
         <div className="hero-content">
           <Link
             href="/order"
