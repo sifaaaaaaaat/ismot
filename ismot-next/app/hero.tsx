@@ -14,10 +14,10 @@ import Wordmark from "./wordmark";
  * poster (.hero-content), measured from the artwork itself, so the hit areas
  * stay on the painted pixels at every viewport size.
  *
- * The delivered file adds a blurred strip of the artwork's own edges down each
- * side, so a phone a little wider than the artwork is filled with picture rather
- * than empty bands and the poster is still never cropped. A wide screen shows it
- * whole and framed, with a blurred copy of itself filling the sides.
+ * A phone is a little wider than the artwork, so the poster is zoomed until it
+ * covers the screen and the few surplus pixels are clipped at the top and bottom
+ * rather than filled with a blurred extension. A wide screen shows it whole and
+ * framed, on a plain dark ground.
  */
 
 type Box = { left: number; top: number; width: number; height: number };
@@ -178,7 +178,7 @@ export default function Hero() {
 
       <div className="hero-poster">
         <Image
-          src="/hero-phone-bleed.webp"
+          src="/hero-phone.webp"
           alt="Ismot Hair Oil — a 100 ml bottle of golden herbal hair oil on a stone plinth, surrounded by hibiscus, rosemary and almond, beneath a large Ismot wordmark, with labels reading 100% natural ingredients and 100 ml pure hair care."
           fill
           priority
@@ -188,21 +188,24 @@ export default function Hero() {
 
         {/* Real controls, placed exactly over the painted ones. */}
         <div className="hero-content">
-          <Link
+          {/* Plain anchors, not <Link>: ordering is the whole point of the
+              page, and a normal navigation still works when the client bundle
+              is stale or blocked — which is what a phone on a dev server hits. */}
+          <a
             href="/order"
             className="hero-hit hero-hit--pill"
             style={boxStyle(HOTSPOTS.order)}
             aria-label="Order Ismot Hair Oil now"
           />
 
-          <Link
+          <a
             href="/order"
             className="hero-hit"
             style={boxStyle(HOTSPOTS.bag)}
             aria-label="Shopping bag — order Ismot Hair Oil"
           >
             <span className="sr-only">Shopping bag</span>
-          </Link>
+          </a>
 
           <button
             type="button"

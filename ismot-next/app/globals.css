@@ -68,13 +68,10 @@ body {
 
 .hero-backdrop {
   position: absolute;
-  inset: -8%;
-  background-image: url("/hero-phone-bleed.webp");
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  filter: blur(38px) saturate(1.2) brightness(0.6);
-  transform: scale(1.06);
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 50% 10%, rgba(255, 214, 140, 0.1), transparent 62%),
+    var(--forest-deep);
   pointer-events: none;
 }
 
@@ -98,46 +95,37 @@ body {
     radial-gradient(60% 34% at 50% 100%, rgba(198, 148, 74, 0.14), transparent 72%);
 }
 
-/* The file is 1053x1870: the 841x1870 artwork with a 106 px strip added down
-   each side, the artwork's own edge mirrored outward and blurred. That strip is
-   what makes a phone a little wider than the artwork fill edge to edge instead
-   of showing a band, while the painted poster itself is never cropped.
+/* The artwork is 841x1870 (about 9:20) and a phone is a little wider than that,
+   so the poster is zoomed until it covers the screen: no band, no blurred
+   filler, and only a few pixels of the artwork's own outer margin are clipped
+   by the root at the top and bottom.
 
-   The box keeps the file's exact ratio and is grown until it covers the
-   viewport; .hero-root centres it and whatever is clipped away is the added
-   strip.
-
-   It is sized from the root's height, not from a max() of viewport units: as a
-   flex item it would otherwise be shrunk a few pixels and stop covering the
-   screen, leaving a band at the top and bottom. */
+   flex: none matters. As a plain flex item the width is shrunk a few pixels and
+   the poster stops covering the screen, which leaves a band at each end. */
 .hero-poster {
   position: relative;
   flex: none;
-  height: 100%;
-  aspect-ratio: 1053 / 1870;
+  width: max(100vw, calc(100svh * 841 / 1870));
+  aspect-ratio: 841 / 1870;
   overflow: hidden;
 }
 
-/* The artwork inside that file. Every hotspot is a percentage of this box, so
-   the real buttons land on the painted controls. */
+/* Every hotspot is a percentage of this box, which is the artwork itself. */
 .hero-content {
   position: absolute;
-  top: 0;
-  height: 100%;
-  left: calc(100% * 106 / 1053);
-  width: calc(100% * 841 / 1053);
+  inset: 0;
 }
 
-/* From 9:16 upward the screen is wider than even the added strip can cover, so
-   the poster is shown whole — finished like a framed print — and the blurred
-   copy behind it fills the sides instead of cropping the header or the CTA. */
-@media (min-aspect-ratio: 1053 / 1870) {
+/* From 9:16 upward the screen is wider than the artwork, where zooming to cover
+   would start eating the wordmark or the CTA; there the poster is shown whole,
+   framed like a print on the plain dark ground. */
+@media (min-aspect-ratio: 9 / 16) {
   .hero-poster {
     flex: none;
     width: auto;
     height: 100vh; /* fallback for browsers without svh */
-    height: min(100svh, calc(100vw * 1870 / 1053));
-    aspect-ratio: 1053 / 1870;
+    height: min(100svh, calc(100vw * 1870 / 841));
+    aspect-ratio: 841 / 1870;
     margin-inline: auto;
     align-self: center;
     border-radius: 18px;

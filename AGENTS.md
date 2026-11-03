@@ -45,18 +45,16 @@ warning just to make them pass.
   until it "looks right".
 - The bag and menu hit boxes sit close together (≈75.8 % and ≈84.4 % across);
   they must never overlap, or the wrong control receives the tap.
-- **Show the whole artwork, and never leave a bare band.** The artwork is
-  841 × 1870 (about 9:20). The delivered file
-  (`public/hero-phone-bleed.webp`) is 1053 × 1870: the artwork with a 106 px strip
-  down each side, mirrored from its own edges and blurred, built by
-  `tools/build_hero_asset.py`. On a phone the poster box keeps that file's ratio
-  and is grown until it covers the viewport
-  (`width: max(100vw, 100svh * 1053 / 1870)`), so only the added strip is ever
-  clipped — no band, and the bottle, CTA and labels are never cropped.
-  `.hero-content` is the artwork's rectangle inside the file
-  (`left: calc(100% * 106 / 1053); width: calc(100% * 841 / 1053)`) and every
-  hotspot is a percentage of it. From 9:16 upward the poster is shown whole and
-  framed, with a blurred copy filling the sides.
+- **Cover the screen, never fill it with blur.** The artwork is 841 × 1870
+  (about 9:20) and is served as painted (`public/hero-phone.webp`, re-encoded by
+  `tools/build_hero_asset.py`). A phone is a little wider, so the poster box keeps
+  the artwork's ratio, is sized `width: max(100vw, 100svh * 841 / 1870)` with
+  `flex: none`, and is zoomed until it covers the viewport: no band, and only a
+  few pixels of the artwork's outer margin are clipped at the top and bottom.
+  Do not add a blurred or mirrored extension down the sides — the brand asked for
+  the zoom instead. `.hero-content` is the artwork's rectangle and every hotspot
+  is a percentage of it. From 9:16 upward the poster is shown whole and framed
+  on the plain dark ground.
 - Info panels are overlays over the hero, not new page sections.
 
 ## 4. Hard constraints on ordering

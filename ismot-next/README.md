@@ -47,7 +47,7 @@ Other scripts, from `ismot-next/`:
 
 ## Homepage: the poster hero
 
-`app/hero.tsx` renders `public/hero-phone-bleed.webp` at its own aspect ratio, and
+`app/hero.tsx` renders `public/hero-phone.webp` at its own aspect ratio, and
 lays **real buttons over the controls that are painted into it**:
 
 | painted control          | element            | action                    |
@@ -76,17 +76,15 @@ the image fills it — the percentages then resolve against the same box the
 artwork is drawn into at every viewport size. The bag and menu boxes sit just
 apart, never overlapping.
 
-The artwork is 841 × 1870 (about 9:20). The delivered file is 1053 × 1870: the
-artwork with a 106 px strip down each side, mirrored from its own edges and
-blurred by `tools/build_hero_asset.py`, so a phone that is a little wider than
-the artwork is filled with picture instead of a dark band. On a phone the poster
-box keeps the file's ratio and is grown until it covers the screen
-(`width: max(100vw, 100svh * 1053 / 1870)`); the `h-svh`, `overflow-hidden` root
-centres it and clips only the added strip. `.hero-content` is the artwork's
-rectangle inside that file (`left: calc(100% * 106 / 1053); width: calc(100% *
-841 / 1053)`), and the hotspots are percentages of it. From 9:16 upward the
-screen is wider still, so the poster is shown whole — framed, rounded, with a
-soft shadow — and a blurred copy of itself fills the sides.
+The artwork is 841 × 1870 (about 9:20) and is served as painted. A phone is a
+little wider, so the poster box keeps that ratio and is zoomed until it covers
+the screen (`width: max(100vw, 100svh * 841 / 1870)`, `flex: none`); the `h-svh`,
+`overflow-hidden` root centres it and clips a few pixels of the artwork's outer
+margin at the top and bottom. There is no blurred or mirrored filler down the
+sides. `.hero-content` is the artwork's rectangle and the hotspots are
+percentages of it. From 9:16 upward the screen is wider still, where covering
+would crop the wordmark, so the poster is shown whole — framed, rounded, on a
+plain dark ground.
 
 The homepage is `h-svh`, `overflow-hidden`, with no section after it — the
 document has exactly one viewport of height and nothing scrolls.
@@ -220,7 +218,7 @@ ismot-next/
 │   ├── orders.ts           → storage (Supabase | SQLite)
 │   ├── admin-auth.ts       → password + signed session cookie
 │   └── rate-limit.ts       → fixed-window limiter
-├── public/                 → hero-phone-bleed.webp, bottle.webp
+├── public/                 → hero-phone.webp, bottle.webp
 └── supabase/schema.sql
 ```
 
