@@ -1,4 +1,4 @@
-import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 
 /**
@@ -82,9 +82,4 @@ export async function startAdminSession(): Promise<void> {
 export async function endAdminSession(): Promise<void> {
   const store = await cookies();
   store.delete(COOKIE_NAME);
-}
-
-/** Never expose order data through a guessable reference. */
-export function newAdminNonce(): string {
-  return randomBytes(8).toString("hex");
 }

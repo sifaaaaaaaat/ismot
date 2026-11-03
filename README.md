@@ -83,17 +83,13 @@ Statuses: **Pending** (initial), Confirmed, Processing, Delivered, Cancelled.
 │   ├── public/                the poster artwork + bottle
 │   └── supabase/schema.sql    orders table + RLS
 │
-├── index.html  app.js  styles.css   ┐ legacy static site (v1) — reference only
-├── assets/                          │  layers.js keeps the artwork manifest
-├── vendor/                          ┘
-│
-├── tools/                     measurement scripts + autosave watcher
-├── vera/  vera_assets_zip/  video_frames/   design reference only
+├── assets/                    the three 841 × 1870 artwork masters
+├── tools/                     poster encoder, measurement script, autosave
 └── AGENTS.md                  working rules for agents in this repo
 ```
 
-Nothing in `ismot-next/` imports from the legacy folder or the reference
-material.
+Nothing in `ismot-next/` imports from `assets/` or `tools/`; they produce the
+images the app serves.
 
 ---
 

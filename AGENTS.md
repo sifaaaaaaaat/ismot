@@ -6,17 +6,13 @@ it*. Read both before making changes.
 ## 1. Where the code is
 
 **All application code lives in `ismot-next/`.** That is the Next.js 16 app
-(App Router, TypeScript, Tailwind v4).
+(App Router, TypeScript, Tailwind v4). It is the whole site; there is no other
+version of it in the repository.
 
-The root-level `index.html`, `app.js`, `styles.css`, `assets/` and `vendor/`
-are the **previous, pre-framework version** of the site, kept for reference
-only. Do not extend them and do not wire them into the Next app. (One thing is
-still useful about them: `assets/layers.js` holds the artwork's layer manifest,
-which is where the hero hotspot percentages come from.)
-
-`vera/`, `vera_assets_zip/`, `video_frames/` and `tools/` are **reference
-inputs** — design history and measurement scripts. Nothing in `ismot-next/`
-imports from them.
+`assets/` holds only the three artwork masters (`ismot-hero-phone.png`,
+`ismot-botanicals.png`, `ismot-benefits.png`), which `tools/build_hero_asset.py`
+encodes into `ismot-next/public/`. Nothing in `ismot-next/` imports from
+`assets/` or `tools/` — they are inputs to the build, not to the app.
 
 ## 2. Run and verify
 
@@ -100,9 +96,8 @@ warning just to make them pass.
   CSS blocks (`.hero-*`, `.overlay*`, `.field`, `.btn-*`) and in `hero.tsx`.
   Put new constants there rather than sprinkling magic numbers through
   components.
-- `app/gsap.ts` and the GSAP dependencies are leftovers from the previous
-  scroll-driven hero and are unused. Don't build new work on them without a
-  reason.
+- There is no animation library in the app: the hero, overlays and page fade
+  are plain CSS. Don't add one for a cosmetic effect.
 
 ## 7. Committing — the repo auto-pushes
 

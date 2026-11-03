@@ -4,7 +4,7 @@ The HTML buttons must sit exactly on the artwork's own buttons, so the boxes are
 measured from the image instead of guessed. Prints each control as a percentage
 box (x, y, w, h) of the artwork, which is what app/hero.tsx uses.
 
-    python tools/measure_hero.py assets/ismot-hero-9x16.png
+    python tools/measure_hero.py assets/ismot-hero-phone.png
 """
 
 import sys

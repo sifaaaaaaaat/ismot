@@ -199,7 +199,32 @@ body {
 .poster-frame {
   position: relative;
   flex: none;
-  width: min(100vw, 841px);
+  /* 100%, not 100vw: with a visible scrollbar 100vw is a scrollbar wider than
+     the page, which makes the whole site scroll sideways. */
+  width: min(100%, 841px);
+}
+
+/* From 9:16 upward the hero is shown whole, so its width is set by the window
+   height. The sheets follow that same width and framing: on a desktop the three
+   posters read as one column of prints, not a narrow poster followed by two
+   double-width ones. */
+@media (min-aspect-ratio: 9 / 16) {
+  .poster-section {
+    padding-block: 10px;
+  }
+
+  .poster-section:last-child {
+    padding-bottom: 40px;
+  }
+
+  .poster-frame {
+    width: min(100%, calc(100svh * 841 / 1870), 841px);
+    overflow: hidden;
+    border-radius: 18px;
+    box-shadow:
+      0 34px 90px rgba(0, 0, 0, 0.62),
+      0 0 0 1px rgba(216, 184, 119, 0.16);
+  }
 }
 
 .poster-art {

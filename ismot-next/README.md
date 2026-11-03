@@ -234,9 +234,6 @@ ismot-next/
 └── supabase/schema.sql
 ```
 
-`app/gsap.ts` and the GSAP dependencies are left over from the earlier
-scroll-scrubbed hero and are no longer imported by any route.
-
 ---
 
 ## Deployment
@@ -255,15 +252,12 @@ phone, not only a resized desktop window.
 
 ---
 
-## Legacy material
+## Artwork and tools
 
-`index.html`, `app.js`, `styles.css`, `assets/` and `vendor/` at the repo root are
-the **pre-framework v1 site**. They are kept for reference (the layer artwork
-manifest in `assets/layers.js` is where the hotspot percentages come from) and
-are not part of the Next.js app.
-
-`vera/`, `vera_assets_zip/`, `video_frames/` and `tools/` are design and
-measurement reference only. Nothing in `ismot-next/` imports from them.
+`assets/` at the repo root holds the three 841 × 1870 artwork masters. Running
+`python tools/build_hero_asset.py` re-encodes them into `public/`, which is the
+only copy the app reads. `tools/measure_hero.py` re-measures a poster if the
+artwork ever changes. Nothing in `ismot-next/` imports from either directory.
 
 Git: this repo auto-commits and pushes (`.githooks/post-commit`,
 `tools/autosave.mjs`, VS Code smart commit) — see `AGENTS.md`.
