@@ -105,8 +105,13 @@ body {
 .hero-poster {
   position: relative;
   flex: none;
+  align-self: flex-start;
   width: max(100vw, calc(100svh * 841 / 1870));
   aspect-ratio: 841 / 1870;
+  /* Take the surplus off the bottom, not evenly off both ends: centred, the crop
+     shaves the top of the wordmark. 30% of the surplus is about as far up as it
+     can go before the Order Now pill starts to graze the bottom edge. */
+  margin-top: min(0px, calc((100svh - 100vw * 1870 / 841) * 0.3));
   overflow: hidden;
 }
 
@@ -122,12 +127,13 @@ body {
 @media (min-aspect-ratio: 9 / 16) {
   .hero-poster {
     flex: none;
+    align-self: center;
     width: auto;
     height: 100vh; /* fallback for browsers without svh */
     height: min(100svh, calc(100vw * 1870 / 841));
     aspect-ratio: 841 / 1870;
     margin-inline: auto;
-    align-self: center;
+    margin-top: 0;
     border-radius: 18px;
     box-shadow:
       0 34px 90px rgba(0, 0, 0, 0.62),
