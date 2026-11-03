@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { formatPrice, MAX_QUANTITY, MIN_QUANTITY, type Product } from "@/lib/product";
+import { createId } from "@/lib/id";
 import { validateOrder, type OrderField } from "@/lib/validation";
 
 type Status = "idle" | "submitting" | "error";
@@ -35,7 +36,7 @@ export default function OrderForm({ product }: { product: Product }) {
   const [formError, setFormError] = useState("");
   const [placed, setPlaced] = useState<{ orderRef: string } | null>(null);
 
-  const submissionId = useRef<string>(crypto.randomUUID());
+  const submissionId = useRef<string>(createId());
   const startedAt = useRef<number>(0);
   const inputs = useRef<Partial<Record<OrderField, HTMLInputElement | HTMLTextAreaElement | null>>>({});
 
