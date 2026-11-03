@@ -6,7 +6,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Wordmark from "./wordmark";
 
 /**
- * Homepage — the promotional artwork, full screen and nothing else.
+ * Homepage hero — the promotional artwork, full screen and nothing else.
+ *
+ * It is the first of three posters on the page; the two sheets below it are
+ * rendered by poster.tsx from page.tsx.
  *
  * Everything the visitor can see is painted into one 841x1870 poster, so the
  * hero renders that poster at its own aspect ratio and covers each painted
@@ -171,7 +174,7 @@ export default function Hero() {
   const panel = mounted && mounted !== "menu" ? PANELS[mounted] : null;
 
   return (
-    <main className="hero-root flex h-svh w-full items-center justify-center overflow-hidden">
+    <section className="hero-root flex h-svh w-full items-center justify-center overflow-hidden">
       <div className="hero-backdrop" aria-hidden="true" />
       <div className="hero-glow" aria-hidden="true" />
       <div className="hero-scrim" aria-hidden="true" />
@@ -368,7 +371,7 @@ export default function Hero() {
           )}
         </div>
       )}
-    </main>
+    </section>
   );
 }
 

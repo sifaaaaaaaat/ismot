@@ -35,14 +35,18 @@ warning just to make them pass.
 
 ## 3. Hard constraints on the homepage
 
-- **The homepage is the artwork and nothing else.** No section below the hero,
-  no footer, no testimonials, product grid or blank spacer. The document must be
-  exactly one viewport tall (`h-svh`, `overflow-hidden`) and must not scroll.
+- **The homepage is the client's three posters, stacked in order.** The hero
+  fills exactly one viewport (`h-svh`, `overflow-hidden`), then the botanical
+  ingredients sheet, then the benefits sheet — all three 841 × 1870, all shown
+  as painted. Nothing else: no footer, no testimonials, product grid, written
+  section or blank spacer. The two sheets below the hero are taller than a
+  phone screen, so the page scrolls; the hero itself must never.
 - **Every painted control keeps a real control on top of it.** The boxes in
   `HOTSPOTS` (`app/hero.tsx`) are percentages of `.hero-content` — the painted
   9:16 poster — and only line up because that element is exactly the artwork's
-  rectangle. If the artwork or a control moves, re-measure — do not nudge pixels
-  until it "looks right".
+  rectangle. The benefits sheet's painted "Buy Now" is covered the same way:
+  its box is a percentage of `.poster-frame` in `app/page.tsx`. If the artwork
+  or a control moves, re-measure — do not nudge pixels until it "looks right".
 - The bag and menu hit boxes sit close together (≈75.8 % and ≈84.4 % across);
   they must never overlap, or the wrong control receives the tap.
 - **Cover the screen, never fill it with blur.** The artwork is 841 × 1870
@@ -55,6 +59,12 @@ warning just to make them pass.
   the zoom instead. `.hero-content` is the artwork's rectangle and every hotspot
   is a percentage of it. From 9:16 upward the poster is shown whole and framed
   on the plain dark ground.
+- **The two sheets below the hero are never cropped or zoomed.** They are shown
+  whole at the artwork's ratio, full width on a phone and capped at 841 px on a
+  desktop (`.poster-section` / `.poster-frame` / `.poster-art` in
+  `app/globals.css`, rendered by `app/poster.tsx`). Source masters are
+  `assets/ismot-botanicals.png` and `assets/ismot-benefits.png`; the same script
+  encodes them to `public/botanicals.webp` and `public/benefits.webp`.
 - Info panels are overlays over the hero, not new page sections.
 
 ## 4. Hard constraints on ordering

@@ -49,15 +49,15 @@ body {
 /* ==========================================================================
    Homepage hero
    --------------------------------------------------------------------------
-   The artwork is a single 941x1671 poster. Every control the visitor can see
+   The artwork is a single 841x1870 poster. Every control the visitor can see
    is painted into it, so the hero renders the poster at its own aspect ratio
    and covers each painted control with a real button whose box is a percentage
    of that poster. Because the poster element has exactly the artwork's ratio,
    those percentages land on the painted pixels at every viewport size.
 
-   Sizing is "contain": the poster is as large as the viewport allows without
-   cropping the bottle or the CTA, and the blurred copy of itself behind it
-   fills the rest of the screen with the same palette.
+   On a phone the poster is zoomed until it covers the screen: no band and no
+   blurred filler. From 9:16 upward, where covering would start eating the
+   wordmark, it is shown whole and framed on the plain dark ground instead.
    ========================================================================== */
 
 .hero-root {
@@ -178,6 +178,42 @@ body {
 
 .hero-hit--pill {
   border-radius: 999px;
+}
+
+/* ==========================================================================
+   Poster sections below the hero
+   --------------------------------------------------------------------------
+   The ingredients and benefits sheets are 841x1870 like the hero, and they are
+   shown whole — never cropped or zoomed — one after another: full width on a
+   phone, and capped at the artwork's own width on a desktop instead of being
+   blown up to the window.
+   ========================================================================== */
+
+.poster-section {
+  display: flex;
+  flex: none;
+  justify-content: center;
+  background: var(--forest-deep);
+}
+
+.poster-frame {
+  position: relative;
+  flex: none;
+  width: min(100vw, 841px);
+}
+
+.poster-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* The hero's entry animation would leave a poster's painted button invisible
+   until it finished, on a control that is already below the fold at load. */
+.poster-frame .hero-hit {
+  animation: none;
 }
 
 /* ==========================================================================

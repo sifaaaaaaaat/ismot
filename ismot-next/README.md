@@ -86,8 +86,20 @@ percentages of it. From 9:16 upward the screen is wider still, where covering
 would crop the wordmark, so the poster is shown whole — framed, rounded, on a
 plain dark ground.
 
-The homepage is `h-svh`, `overflow-hidden`, with no section after it — the
-document has exactly one viewport of height and nothing scrolls.
+### The two sheets below the hero
+
+`app/page.tsx` stacks two more of the client's 841 × 1870 posters under the
+hero: the botanical ingredients flat-lay (`public/botanicals.webp`) and the
+benefits sheet (`public/benefits.webp`). `app/poster.tsx` renders each one, and
+they are shown whole — never cropped or zoomed — at the artwork's own ratio,
+full width on a phone and capped at 841 px on a desktop. The page scrolls
+through them; the hero itself is still exactly one viewport (`h-svh`,
+`overflow-hidden`) and never scrolls internally.
+
+The benefits sheet paints a **Buy Now** button. It is covered by a real link to
+`/order` whose box is a percentage of `.poster-frame` (`app/page.tsx`), measured
+from the artwork like the hero hotspots: left 62.4 %, top 87.3 %, width 34.3 %,
+height 4.7 %.
 
 ### Menu and info panels
 

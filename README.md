@@ -3,7 +3,8 @@
 **Ismot Hair Oil** is a single-product store with two customer screens and one
 staff screen:
 
-1. **`/`** — the promotional artwork, full screen. Nothing below it, no scroll.
+1. **`/`** — the client's three posters: the artwork full screen, then the
+   ingredients flat-lay, then the benefits sheet. Nothing else.
 2. **`/order`** — name, mobile number and delivery address, then a real
    confirmation with an order reference.
 3. **`/admin`** — the shopkeeper's order list, status updates and `.xlsx` export.
@@ -53,9 +54,11 @@ buttons over the painted controls**, positioned as percentages of the poster
 - **About / Benefits / Ingredients** → information overlays over the hero
 - **logo** → `/`
 
-The poster is shown whole on every screen (it fills the width on phones and the
-height on desktop), and a blurred copy of itself fills the remaining space with
-the same forest-and-gold palette. The document is exactly one viewport tall.
+The hero poster is zoomed until it covers a phone screen (no bands, no blurred
+filler); on a screen wider than 9:16 it is shown whole, framed on the plain dark
+ground. The two sheets below it are shown whole at the artwork's own ratio and
+the page scrolls through them. The benefits sheet's painted **Buy Now** is a real
+link to `/order` as well.
 
 ## How ordering works
 
