@@ -69,7 +69,7 @@ body {
 .hero-backdrop {
   position: absolute;
   inset: -8%;
-  background-image: url("/hero-phone.webp");
+  background-image: url("/hero-phone-bleed.webp");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -98,37 +98,48 @@ body {
     radial-gradient(60% 34% at 50% 100%, rgba(198, 148, 74, 0.14), transparent 72%);
 }
 
-/* The artwork itself is phone-shaped (841x1870, about 9:20), so it can fill the
-   screen with nothing added to it. The box keeps the file's exact ratio — every
-   hotspot is a percentage of it — and is grown until it covers the viewport;
-   .hero-root centres it and clips the few surplus pixels.
+/* The file is 1053x1870: the 841x1870 artwork with a 106 px strip added down
+   each side, the artwork's own edge mirrored outward and blurred. That strip is
+   what makes a phone a little wider than the artwork fill edge to edge instead
+   of showing a band, while the painted poster itself is never cropped.
 
-   Growing by width leaves a sliver top and bottom on a 19.5:9 phone; growing by
-   height on a 21:9 phone leaves a sliver at each side. Either way the screen is
-   never left with a band of empty space. */
+   The box keeps the file's exact ratio and is grown until it covers the
+   viewport; .hero-root centres it and whatever is clipped away is the added
+   strip.
+
+   It is sized from the root's height, not from a max() of viewport units: as a
+   flex item it would otherwise be shrunk a few pixels and stop covering the
+   screen, leaving a band at the top and bottom. */
 .hero-poster {
   position: relative;
-  width: max(100vw, calc(100svh * 841 / 1870));
-  aspect-ratio: 841 / 1870;
+  flex: none;
+  height: 100%;
+  aspect-ratio: 1053 / 1870;
   overflow: hidden;
 }
 
-/* Every hotspot is a percentage of this box, which is the artwork itself. */
+/* The artwork inside that file. Every hotspot is a percentage of this box, so
+   the real buttons land on the painted controls. */
 .hero-content {
   position: absolute;
-  inset: 0;
+  top: 0;
+  height: 100%;
+  left: calc(100% * 106 / 1053);
+  width: calc(100% * 841 / 1053);
 }
 
-/* From about 1:2 upward the screen is wider than the artwork, so it is shown
-   whole — finished like a framed print — and the blurred copy behind it fills
-   the sides instead of cropping the header or the CTA. */
-@media (min-aspect-ratio: 1 / 2) {
+/* From 9:16 upward the screen is wider than even the added strip can cover, so
+   the poster is shown whole — finished like a framed print — and the blurred
+   copy behind it fills the sides instead of cropping the header or the CTA. */
+@media (min-aspect-ratio: 1053 / 1870) {
   .hero-poster {
+    flex: none;
     width: auto;
     height: 100vh; /* fallback for browsers without svh */
-    height: min(100svh, calc(100vw * 1870 / 841));
-    aspect-ratio: 841 / 1870;
+    height: min(100svh, calc(100vw * 1870 / 1053));
+    aspect-ratio: 1053 / 1870;
     margin-inline: auto;
+    align-self: center;
     border-radius: 18px;
     box-shadow:
       0 34px 90px rgba(0, 0, 0, 0.62),

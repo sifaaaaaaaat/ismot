@@ -10,13 +10,14 @@ import Wordmark from "./wordmark";
  *
  * Everything the visitor can see is painted into one 841x1870 poster, so the
  * hero renders that poster at its own aspect ratio and covers each painted
- * control with a real button. The boxes below are percentages of the poster,
- * measured from the artwork itself (tools/measure_hero.py), so the hit areas
+ * control with a real button. The boxes below are percentages of the painted
+ * poster (.hero-content), measured from the artwork itself, so the hit areas
  * stay on the painted pixels at every viewport size.
  *
- * The artwork is phone-shaped, so a phone shows it filling the screen with
- * nothing added to it; a wide screen shows it whole and framed, with a blurred
- * copy of itself filling the sides.
+ * The delivered file adds a blurred strip of the artwork's own edges down each
+ * side, so a phone a little wider than the artwork is filled with picture rather
+ * than empty bands and the poster is still never cropped. A wide screen shows it
+ * whole and framed, with a blurred copy of itself filling the sides.
  */
 
 type Box = { left: number; top: number; width: number; height: number };
@@ -177,7 +178,7 @@ export default function Hero() {
 
       <div className="hero-poster">
         <Image
-          src="/hero-phone.webp"
+          src="/hero-phone-bleed.webp"
           alt="Ismot Hair Oil — a 100 ml bottle of golden herbal hair oil on a stone plinth, surrounded by hibiscus, rosemary and almond, beneath a large Ismot wordmark, with labels reading 100% natural ingredients and 100 ml pure hair care."
           fill
           priority
