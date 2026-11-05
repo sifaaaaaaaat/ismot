@@ -5,7 +5,7 @@ screens and one staff screen:
 
 | Route   | What it is                                                        |
 | ------- | ----------------------------------------------------------------- |
-| `/`     | The full-screen promotional artwork. Nothing below it, no scroll.  |
+| `/`     | The client's three posters: hero, ingredients sheet, benefits sheet.|
 | `/order`| The order form: name, mobile number, delivery address.             |
 | `/admin`| Staff order list, status updates and the `.xlsx` export.            |
 | `/api/orders` | `POST` only — the one way an order is created.               |
@@ -230,7 +230,7 @@ ismot-next/
 │   ├── orders.ts           → storage (Supabase | SQLite)
 │   ├── admin-auth.ts       → password + signed session cookie
 │   └── rate-limit.ts       → fixed-window limiter
-├── public/                 → hero-phone.webp, bottle.webp
+├── public/                 → hero-phone, botanicals, benefits, bottle (.webp)
 └── supabase/schema.sql
 ```
 
@@ -238,14 +238,23 @@ ismot-next/
 
 ## Deployment
 
-`ismot-next/` is a standard Next.js 16 app, so Vercel works with that directory
-as the project root. Before going live:
+Live at <https://ismot.vercel.app>: Vercel project `ismot`, root directory
+`ismot-next`, deploying from `main`. Serverless functions have no persistent
+disk, so production **must** use Supabase — with neither `SUPABASE_URL` nor
+`SUPABASE_SERVICE_ROLE_KEY` set, every `POST /api/orders` answers 500.
 
-1. Set `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `SUPABASE_URL`,
-   `SUPABASE_SERVICE_ROLE_KEY` (and `PRODUCT_PRICE_BDT` if you have a price).
-2. Run `supabase/schema.sql` in the Supabase SQL editor.
-3. Place one test order end-to-end and confirm it appears in `/admin` and in the
+1. Set `ADMIN_PASSWORD`, `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in the
+   Vercel project (Production and Preview), and `ADMIN_SESSION_SECRET` /
+   `PRODUCT_PRICE_BDT` if you want them.
+2. Run `supabase/schema.sql` in the Supabase SQL editor. The app's keys can read
+   and write rows but cannot run DDL, so the table has to be created there.
+3. Redeploy: environment variables only reach the functions in a new deployment.
+4. Place one test order end-to-end and confirm it appears in `/admin` and in the
    export.
+
+For a psql connection, the project's direct `db.<ref>.supabase.co` host is
+IPv6-only; use the pooler instead —
+`postgres.<ref>@aws-0-<region>.pooler.supabase.com:5432` (`ap-south-1` here).
 
 The hero depends on `svh` units and `min()`/`aspect-ratio`; check it on a real
 phone, not only a resized desktop window.

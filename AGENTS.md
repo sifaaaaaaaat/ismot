@@ -56,8 +56,10 @@ warning just to make them pass.
   is a percentage of it. From 9:16 upward the poster is shown whole and framed
   on the plain dark ground.
 - **The two sheets below the hero are never cropped or zoomed.** They are shown
-  whole at the artwork's ratio, full width on a phone and capped at 841 px on a
-  desktop (`.poster-section` / `.poster-frame` / `.poster-art` in
+  whole at the artwork's ratio: full width on a phone, and on a desktop they
+  follow the hero's own width and framing (`min(100%, calc(100svh * 841 / 1870),
+  841px)`, rounded, on the plain dark ground) so all three posters read as one
+  column (`.poster-section` / `.poster-frame` / `.poster-art` in
   `app/globals.css`, rendered by `app/poster.tsx`). Source masters are
   `assets/ismot-botanicals.png` and `assets/ismot-benefits.png`; the same script
   encodes them to `public/botanicals.webp` and `public/benefits.webp`.

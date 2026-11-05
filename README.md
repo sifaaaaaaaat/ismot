@@ -44,7 +44,7 @@ above. The service-role key is server-only and is never sent to the browser.
 
 ## How the homepage works
 
-The hero is one 941 × 1671 poster. Every control in it is painted into the
+The hero is one 841 × 1870 poster. Every control in it is painted into the
 image, so the page renders the poster at its own aspect ratio and places **real
 buttons over the painted controls**, positioned as percentages of the poster
 (`HOTSPOTS` in `ismot-next/app/hero.tsx`):
@@ -95,11 +95,20 @@ images the app serves.
 
 ## Deployment
 
-`ismot-next/` is a standard Next.js 16 app; Vercel works with that directory as
-the project root. Before going live, set `ADMIN_PASSWORD`,
-`ADMIN_SESSION_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (and
-`PRODUCT_PRICE_BDT` if there is a price), run the Supabase schema, and place one
-test order end-to-end.
+Live at <https://ismot.vercel.app> on Vercel: project `ismot`, GitHub repo
+`sifaaaaaaaat/ismot`, root directory `ismot-next`, production branch `main`, so
+every push to `main` builds and promotes.
+
+The Vercel project carries `ADMIN_PASSWORD`, `SUPABASE_URL` and
+`SUPABASE_SERVICE_ROLE_KEY` for Production and Preview. `ADMIN_SESSION_SECRET`
+and `PRODUCT_PRICE_BDT` are deliberately unset: the cookie is signed with the
+admin password, and no price is shown until someone sets one.
+
+Vercel functions have no persistent disk, so orders there **must** go to
+Supabase: run `ismot-next/supabase/schema.sql` once in the project's SQL editor,
+then redeploy — new variables only reach running functions in a new deployment.
+Check a deployment by placing one real order and confirming it appears in
+`/admin` and in the export.
 
 ---
 
