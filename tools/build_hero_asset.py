@@ -23,7 +23,10 @@ def main() -> None:
     for src, out in POSTERS:
         art = Image.open(src).convert("RGB")
         width, height = art.size
-        art.save(out, "WEBP", quality=88, method=6)
+        # Quality 72 is what the site ships: it is the same picture to the eye at
+        # 841 px wide and about 45% of the bytes at 88, which matters because the
+        # hero is the first thing a phone on mobile data has to download.
+        art.save(out, "WEBP", quality=72, method=6)
 
         kb = os.path.getsize(out) / 1024
         print(f"{out}: {width}x{height} ratio {width / height:.4f} ({kb:.0f} KB)")
